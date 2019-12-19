@@ -1,0 +1,41 @@
+{
+    "Main": {
+        "IsOne": "true",
+        "Streng": "true",
+        "SmtpSleep": "0",
+        "QQDayMax": "1",
+        "QQSleep": "2",
+        "VerifyEmail": "",
+        "VerifyPasswd": "",
+        "GroupListType": "true"
+    },
+    "SmtpList": {
+        "1": {
+            "Switch": "true",
+            "Smtp": "11",
+            "Email": "3",
+            "Passwd": "44",
+            "Port": "22",
+            "DayMax": "55"
+        }
+    },
+    "WordList": {
+        "1": {
+            "Switch": "true",
+            "Title": "54",
+            "Word": "54",
+            "Name": ""
+        },
+        "2": {
+            "Switch": "true",
+            "Title": "54",
+            "Word": "54",
+            "Name": ""
+        }
+    },
+    "GroupList": "",
+    "KeyWord": [
+        "1234",
+        "3425"
+    ]
+}

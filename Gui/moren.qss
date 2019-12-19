@@ -1,0 +1,162 @@
+QWidget{
+background-color:#FFFFFF;
+}
+
+QPushButton{
+background-color:#e7e7e7;
+background-size:120px 40px;
+border-radius:5px;
+border:2px solid rgb(205,207,208);
+padding:5px;
+color: black;
+}
+
+QPushButton:hover{background-color:#00CCFF;
+background-size:120px 40px;
+border-radius:3px;
+border:2px solid rgb(205,207,208);
+padding:5px;
+color: black;
+}
+
+QPushButton:pressed{
+background-color:#2B91D5;
+background-size:120px 40px;
+border-radius:5px;
+border:2px solid rgb(205,207,208);
+padding:5px;
+color: black;
+}
+
+QPushButton:disabled{
+border:2px solid rgb(205,207,208);
+cursor:not-allowed;
+padding:5px;
+background:#999;
+}
+
+QTableView{
+border-radius:8px;
+border:2px solid black;
+padding:3px;
+}
+
+QLineEdit{
+border-radius:5px;
+border:1px solid black;
+background-color:#f6f7fa;
+padding:3px;
+}
+
+QLineEdit:disabled{
+border:none;
+border:1px solid black;
+padding:3px;
+
+}
+
+QTextEdit{
+border-radius:5px;
+border:1px solid black;
+background-color:#f6f7fa;
+padding:5px;
+}
+
+
+QListView{
+border-radius:5px;
+border:1px solid black;
+background-color:#f6f7fa;
+padding:5px;
+}
+
+
+
+
+
+
+
+QTableView QTableCornerButton::section {
+color: red;
+background-color: rgb(64, 64, 64);
+border: 5px solid #f6f7fa;
+border-radius:0px;
+border-color: rgb(64, 64, 64);
+}
+
+QTableView {
+color: black;
+gridline-color: #000;
+background-color: #f6f7fa;
+alternate-background-color: rgb(64, 64, 64);
+selection-color: black;
+selection-background-color:#66CDAA;
+border-top:2px groove gray;
+border-left:2px groove gray;
+border: 2px groove #000000;
+
+border-radius: 0px;
+padding: 2px 4px;
+}
+
+QHeaderView {
+color: black;
+font: bold 10pt;
+background-color: #f6f7fa;
+
+border-left-color: rgba(255, 255, 255, 0);
+border-top-color: rgba(255, 255, 255, 0);
+border-radius:0px;
+min-height:29px;
+}
+
+QHeaderView::section {
+color: white;
+background-color: #6699CC;
+border: 1px solid #f6f7fa;
+border-left:0;
+border-top:0;
+border-bottom:0;
+border-radius:0px;
+
+}
+
+QScrollBar:handle:vertical
+{
+background:#FFFFFF;
+border:1px solid black;
+}
+
+
+QScrollBar:handle:horizontal
+{
+background:#FFFFFF;
+border:1px solid black;
+}
+
+
+QMenu{
+color: black;
+}
+
+QMenu:item:selected{
+background-color: #6699CC;
+}
+
+QMenu:disabled{
+color: #C0C0C0;
+}
+
+
+
+QComboBox{
+color: black;
+}
+
+QComboBox:item:selected{
+background-color: #6699CC;
+}
+
+QComboBox:disabled{
+color: #C0C0C0;
+}
