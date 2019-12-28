@@ -86,7 +86,6 @@ border-color: rgb(64, 64, 64);
 
 QTableView {
 color: black;
-gridline-color: #000;
 background-color: #f6f7fa;
 alternate-background-color: rgb(64, 64, 64);
 selection-color: black;
@@ -103,7 +102,6 @@ QHeaderView {
 color: black;
 font: bold 10pt;
 background-color: #f6f7fa;
-
 border-left-color: rgba(255, 255, 255, 0);
 border-top-color: rgba(255, 255, 255, 0);
 border-radius:0px;

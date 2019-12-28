@@ -218,6 +218,26 @@ public:
 		sqlLog(0, 0, "系统", buf.c_str());
 	}
 
+
+	//测试
+	void testLog(string str)
+	{
+		// 基于当前系统的当前日期/时间
+		time_t now = time(0);
+
+		// 把 now 转换为字符串形式
+		char* dt = ctime(&now);
+
+
+		ofstream  file("test.log", ios::app);
+		if (file.good())
+		{
+			file << dt;
+			file << str << endl << endl;
+			file.close();
+		}
+	}
+
 	//重写info
 	void Info(string msg)
 	{
@@ -1511,6 +1531,8 @@ void SendEmail::send()
 		}
 	}
 
+
+	logger.testLog("准备发送");
 	auto QQInf = CQ::getStrangerInfo(m_QQId, true);
 	auto GroupInf = CQ::getGroupList();
 
@@ -1537,7 +1559,7 @@ void SendEmail::send()
 	stringstream log;
 	log << "使用邮箱:" << m_smtp.email.c_str() << " 发送内容标题:" << m_word.title.c_str();
 
-
+	logger.testLog("准备发送2");
 	string temp_word(m_word.word);
 	string temp_title(m_word.title);
 	string temp_name(m_word.name);
@@ -1550,7 +1572,7 @@ void SendEmail::send()
 	//email.setTarget(to_string(m_QQId) + "@qq.com");
 	//email.setTitle(temp_title);
 
-
+	logger.testLog("变量构造完成");
 	//email.setContent(temp_word);
 
 	//string temp_word = replace_line(m_word.word);
@@ -1624,6 +1646,7 @@ void SendEmail::send()
 		return;
 	}
 
+	logger.testLog("邮箱验证完成");
 	//发送邮件
 	//if (email.SendMail() == false)
 	if (email.send() == false)
@@ -1654,6 +1677,7 @@ void SendEmail::send()
 
 	logger.sqlLog(m_GroupId, m_QQId, "发送成功", (log.str() + " 返回信息:" + email.getInf()).c_str());
 
+	logger.testLog("发送完成");
 }
 
 

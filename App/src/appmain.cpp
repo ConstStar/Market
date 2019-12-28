@@ -17,12 +17,19 @@ using namespace CQ;
 
 //请加上static,表示这个logger只有本cpp有效
 
+
+//应用已被启用
 EVE_Enable(Enable)
 {
 	appFile = CQ::getAppDirectory();
 
+	logger.testLog("应用已被启用");
+
+
 	if (FreeResFile::oneStart() == false)
 		return 0;
+	logger.testLog("End oneStart");
+
 
 	thread* ph = new thread([]()
 		{
@@ -38,6 +45,8 @@ EVE_Enable(Enable)
 	ph->detach();
 	Conf::keyFun();
 	Conf::initConf();
+
+	logger.testLog("End 应用被启用");
 	logger.Info("应用被启用");
 	return 0;
 }
@@ -45,6 +54,7 @@ EVE_Enable(Enable)
 EVE_Disable(Disable)
 {
 	logger.Info("应用被停用");
+	logger.testLog("应用被停用");
 	return 0;
 }
 
@@ -62,9 +72,10 @@ EVE_System_GroupMemberIncrease(intoGroup)
 		logger.Info("请先激活软件");
 	}
 
+	logger.testLog("群成员添加");
 	SendEmail a(fromGroup, beingOperateQQ, "成员进群");
 	a.send();
-
+	logger.testLog("End 群成员添加");
 
 	return 0;
 }
@@ -79,13 +90,14 @@ EVE_System_GroupMemberDecrease(exitGroup)
 
 		return 0;
 	}
+	logger.testLog("群成员退出");
 
 	if (g_otherSet.quitGroupSend)
 	{
 		SendEmail a(fromGroup, beingOperateQQ, "成员退群");
 		a.send();
 	}
-
+	logger.testLog("End 群成员退出");
 	return 0;
 }
 
@@ -99,11 +111,13 @@ EVE_Request_AddFriend(addFriend)
 		return 0;
 	}
 
+	logger.testLog("好友添加");
 	if (g_otherSet.addFriend)
 	{
 		CQ::setFriendAddRequest(responseFlag, 请求_通过, "");
 	}
 
+	logger.testLog("End 好友添加");
 	return 0;
 }
 
@@ -117,6 +131,7 @@ EVE_Request_AddGroup(addGroup)
 		return 0;
 	}
 
+	logger.testLog("群添加");
 	if (subType == 2)
 	{
 		if (g_otherSet.addGroupInto)
@@ -125,6 +140,7 @@ EVE_Request_AddGroup(addGroup)
 		}
 
 	}
+	logger.testLog("End 群添加");
 	return 0;
 }
 
@@ -150,9 +166,11 @@ EVE_GroupMsg(groupMsg)
 		logger.Info("请先激活软件");
 		return 0;
 	}
+
+	logger.testLog("群消息");
 	KeyWordMsg a(fromGroup, fromQQ, msg);
 	a.KeyWordFun();
-
+	logger.testLog("End 群消息");
 	return 0;
 }
 
@@ -166,10 +184,12 @@ EVE_Menu(__menuSet)
 		return 0;
 	}
 
+	logger.testLog("菜单");
 	if (OpenWin::openWin() == false)
 	{
 		MessageBox(NULL, L"界面打开失败,请查看日志中错误原因", L"失败", MB_OK);
 	}
 
+	logger.testLog("End 菜单");
 	return 0;
 }
