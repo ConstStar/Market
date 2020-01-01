@@ -211,7 +211,7 @@ void MarketUpdate::update()
 	bool theadOff = false;
 	int ret = -1;
 	string errorInf = "未知错误";
-	QFuture <void> future = QtConcurrent::run([&]()
+	auto ph = new std::thread([&]()
 		{
 			Download a(m_url.toStdString(), "./app/cn.xiaoxiaoge.Market.cpk", "./app/cn.xiaoxiaoge.Market.tmp", prog_num);
 			ret = a.start();
@@ -227,7 +227,9 @@ void MarketUpdate::update()
 			s++;
 			if (s > 500)
 			{
-				future.cancel();
+				//future.cancel();
+				//delete ph;
+
 				ret = false;
 				errorInf = "下载超时";
 				//QMessageBox::information(NULL, QString::fromLocal8Bit("失败"), QString::fromLocal8Bit("下载超时"));

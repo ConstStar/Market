@@ -145,7 +145,7 @@ void MarketKey::onPushButton()
 				}
 				else
 				{
-					QMessageBox::information(NULL, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("秘钥未绑定此计算机，请联系QQ3228932269"), QMessageBox::Ok);
+					QMessageBox::information(NULL, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("秘钥未绑定此计算机"), QMessageBox::Ok);
 					return;
 				}
 

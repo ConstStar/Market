@@ -49,6 +49,7 @@ public:
 			//如果为第一次启动
 			if (one)
 			{
+				Sleep(500);
 				int ret = freeFileAll();
 				if (ret == false)
 					return false;

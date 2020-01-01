@@ -297,7 +297,7 @@ void WEmailTest::onTest()
 	ui.button_test->setEnabled(false);
 	ui.button_test->update();
 
-	QFuture < void > future = QtConcurrent::run([&]() {
+	//QFuture < void > future = QtConcurrent::run([&]() {
 		try
 		{
 			string name;
@@ -335,6 +335,8 @@ void WEmailTest::onTest()
 			//开始遍历邮箱列表
 			for (int i = 0; i < m_model->rowCount(); i++)
 			{
+				QCoreApplication::processEvents();
+
 				if (m_model->item(i)->checkState() == Qt::Checked)
 				{
 					m_model->itemFromIndex(m_model->index(i, 2))->setText(QString::fromLocal8Bit("正在发送"));
@@ -391,7 +393,10 @@ void WEmailTest::onTest()
 
 					//发送邮件
 					//if (email.SendMail() == false)
+
+					QCoreApplication::processEvents();
 					bool ret = email.send();
+					QCoreApplication::processEvents();
 
 					if (ret)
 					{
@@ -437,7 +442,7 @@ void WEmailTest::onTest()
 			ui.button_test->setEnabled(true);
 			return;
 		}
-		});
+		//});
 }
 
 //获取内容

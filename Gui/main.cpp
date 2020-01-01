@@ -9,6 +9,7 @@
 
 #include "json.hpp"
 
+#include <thread>
 #include <sstream>
 #include <string>
 #include <map>
@@ -20,7 +21,7 @@ bool get_keyData();
 bool get_Update(wstring strMapName);
 
 
-string appFile="D:\\用户文档\\桌面\\桌面整理\\酷Q\\data\\app\\cn.xiaoxiaoge.Market\\";
+string appFile = "D:\\用户文档\\桌面\\桌面整理\\酷Q\\data\\app\\cn.xiaoxiaoge.Market\\";
 map<long long, wstring> WinGroupList;
 
 string local_computer;
@@ -28,12 +29,40 @@ string version;
 string key;
 string exceedDateTime;
 
+
+void closeWin(QApplication& a)
+{
+	auto ph = new std::thread([&]
+		{
+			while (true)
+			{
+
+				fstream file("closeWin.tmp");
+				if (file.is_open())
+				{
+					file.close();
+
+					//remove("closeWin.tmp");
+					//MessageBoxA(NULL, "test", "test", MB_OK);
+					a.closeAllWindows();
+				}
+
+				Sleep(20);
+			}
+		});
+}
+
+
+
 int main(int argc, char* argv[])
 {
 
 	QApplication::setStyle(QStyleFactory::create("Fusion"));
 
+
 	QApplication a(argc, argv);
+	closeWin(a);
+
 	QFile qss(":/moren.qss");
 	qss.open(QFile::ReadOnly);
 	a.setStyleSheet(qss.readAll());

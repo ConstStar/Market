@@ -228,8 +228,27 @@ public:
 		// 把 now 转换为字符串形式
 		char* dt = ctime(&now);
 
+		ofstream file;
+		size_t srcSize = 0;
 
-		ofstream  file("test.log", ios::app);
+		ifstream fsRead("test.log", ios::in | ios::binary);
+		if (fsRead.good())
+		{
+			fsRead.seekg(0, fsRead.end);
+			srcSize = fsRead.tellg();
+			fsRead.close();
+		}
+
+		if (srcSize > 20480)
+		{
+			file.open("test.log", ios::out);
+		}
+		else
+		{
+			file.open("test.log", ios::app);
+		}
+
+
 		if (file.good())
 		{
 			file << dt;
@@ -372,6 +391,11 @@ public:
 
 	//打开检查更新界面
 	static bool update();
+
+
+	static void close();
+
+	static void remove();
 };
 
 //发送邮箱
@@ -543,7 +567,8 @@ void Conf::initConf()
 	//读取统计次数
 	read_count();
 
-	//readConfAll();//读取全部配置
+	//读取全部配置
+	readConfAll();
 
 	//开启定时读取配置线程
 	initConfTime();
@@ -619,7 +644,7 @@ void Conf::keyFun()
 	{
 		g_otherSet.appRun = false;
 
-		MessageBox(NULL, L"机器码不匹配，有问题请联系QQ3228932269", L"验证失败", MB_OK);
+		MessageBox(NULL, L"机器码不匹配", L"验证失败", MB_OK);
 		OpenWin::openKeyWin();
 	}
 	else if (ret == 3)
@@ -820,11 +845,13 @@ void Conf::initConfTime()
 			{
 				waitUpdate();
 				wait();
+
 				read_keyWord();
 				read_emailList();
 				read_wordList();
 				read_groupList();
 				read_Other();
+
 				signal();
 			}
 		}
@@ -1260,6 +1287,23 @@ void OpenWin::openKeyWin()
 
 }
 
+void OpenWin::close()
+{
+	fstream file("closeWin.tmp", ios::out);
+	file.close();
+
+	auto ph = new std::thread([]
+		{
+			Sleep(1000);
+			remove();
+		});
+}
+
+void OpenWin::remove()
+{
+	::remove("closeWin.tmp");
+}
+
 //打开设置窗口
 bool OpenWin::openWin()
 {
@@ -1495,11 +1539,13 @@ CONF_EMAIL getEmail()
 	}
 
 	return g_emailList.at(index);
+
 }
 
 CONF_WORD getWord()
 {
 	static int index;
+
 
 	index++;
 	if (index >= g_wordList.size())
@@ -1508,6 +1554,7 @@ CONF_WORD getWord()
 	}
 
 	return g_wordList.at(index);
+
 }
 
 
@@ -1824,6 +1871,7 @@ void SendEmail::replace_all_random(string& str)
 //获取发送内容与邮箱
 bool SendEmail::getSendData()
 {
+	logger.testLog("开始获取内容");
 	//更新时间
 	Conf::updataTime();
 
@@ -1844,6 +1892,7 @@ bool SendEmail::getSendData()
 		}
 	}
 
+	logger.testLog("end 获取发送邮箱账号");
 	long long smtpSleep = time(NULL);
 
 	if (g_otherSet.smtpSleep > smtpSleep - g_emailLimit[m_smtp.email].sleep)
@@ -1857,7 +1906,7 @@ bool SendEmail::getSendData()
 	//获取发送邮箱内容
 	m_word = getWord();
 
-
+	logger.testLog("end 获取发送邮箱内容");
 	return true;
 }
 
@@ -1997,6 +2046,8 @@ bool KeyWordMsg::KeyWordFun()
 	{
 		if (m_wmsg.find(KeyWord_one) != std::wstring::npos)
 		{
+			logger.testLog("触发普通关键词检测");
+
 			SendEmail a(m_fromGroup, m_fromQQ, "触发关键词");
 			a.send();
 
@@ -2036,6 +2087,8 @@ bool KeyWordMsg::KeyWordFun()
 			//触发强力检测后
 			if (temp_num_find >= temp_num)
 			{
+				logger.testLog("触发强力关键词检测");
+
 				SendEmail a(m_fromGroup, m_fromQQ, "触发关键词");
 				a.send();
 			}

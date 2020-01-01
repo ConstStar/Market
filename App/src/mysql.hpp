@@ -20,7 +20,7 @@ public:
 			hDLL = LoadLibrary(L"MySql.dll"); //加载动态链接库MyDll.dll文件；
 
 			if (hDLL == NULL) {
-				MessageBoxA(NULL, "重要dll获取失败，请联系QQ1164442003求助", "错误", NULL);
+				MessageBoxA(NULL, "重要dll获取失败", "错误", NULL);
 				//logger.Info("界面打开失败");
 				return false;
 			}
@@ -33,7 +33,7 @@ public:
 
 			if (keyComp == NULL)
 			{
-				MessageBoxA(NULL, "重要dll加载失败，请联系QQ1164442003求助", "错误", NULL);
+				MessageBoxA(NULL, "重要dll加载失败", "错误", NULL);
 				return false;
 			}
 

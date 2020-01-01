@@ -26,6 +26,13 @@
       "id": 2
     },
     {
+      "name": "酷Q关闭",
+      "function": "Exit",
+      "type": 1002,
+      "priority": 30000,
+      "id": 9
+    },
+    {
       "name": "群成员添加",
       "function": "intoGroup",
       "type": 103,

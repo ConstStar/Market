@@ -20,17 +20,12 @@ using namespace CQ;
 
 //应用已被启用
 EVE_Enable(Enable)
+try
 {
+	OpenWin::close();
 	appFile = CQ::getAppDirectory();
 
-	logger.testLog("应用已被启用");
-
-
-	if (FreeResFile::oneStart() == false)
-		return 0;
-	logger.testLog("End oneStart");
-
-
+	//检查秘钥
 	thread* ph = new thread([]()
 		{
 
@@ -42,6 +37,15 @@ EVE_Enable(Enable)
 
 		}
 	);
+	logger.testLog("应用已被启用");
+
+	//检查是否为第一次启动
+	if (FreeResFile::oneStart() == false)
+		return 0;
+
+
+	logger.testLog("End oneStart");
+
 	ph->detach();
 	Conf::keyFun();
 	Conf::initConf();
@@ -50,13 +54,48 @@ EVE_Enable(Enable)
 	logger.Info("应用被启用");
 	return 0;
 }
+catch (exception & e)
+{
+	logger.Info(string("“应用已被启用” 出现崩溃已被阻止 原因:") + e.what());
+}
+catch (...)
+{
+	logger.Info("“应用已被启用” 出现崩溃已被阻止 原因:未知");
+}
 
+
+//应用被停用
 EVE_Disable(Disable)
+try
 {
 	logger.Info("应用被停用");
 	logger.testLog("应用被停用");
+
+	OpenWin::close();
+
 	return 0;
 }
+catch (exception & e)
+{
+	logger.Info(string("“应用即将被停用” 出现崩溃已被阻止 原因:") + e.what());
+}
+catch (...)
+{
+	logger.Info("“应用即将被停用” 出现崩溃已被阻止 原因:未知");
+}
+
+
+EVE_Exit(Exit)
+{
+	logger.Info("酷Q关闭");
+	logger.testLog("酷Q关闭");
+
+	OpenWin::close();
+
+	return 0;
+}
+
+
 
 MUST_AppInfo_RETURN(CQAPPID)
 
@@ -66,6 +105,7 @@ MUST_AppInfo_RETURN(CQAPPID)
 
 //群成员添加
 EVE_System_GroupMemberIncrease(intoGroup)
+try
 {
 	if (g_otherSet.appRun == false)
 	{
@@ -79,10 +119,20 @@ EVE_System_GroupMemberIncrease(intoGroup)
 
 	return 0;
 }
+catch (exception & e)
+{
+	logger.Info(string("“群成员添加” 出现崩溃已被阻止 原因:") + e.what());
+}
+catch (...)
+{
+	logger.Info("“群成员添加” 出现崩溃已被阻止 原因:未知");
+}
+
 
 
 //群成员退出
 EVE_System_GroupMemberDecrease(exitGroup)
+try
 {
 	if (g_otherSet.appRun == false)
 	{
@@ -100,10 +150,19 @@ EVE_System_GroupMemberDecrease(exitGroup)
 	logger.testLog("End 群成员退出");
 	return 0;
 }
+catch (exception & e)
+{
+	logger.Info(string("“群成员退出” 出现崩溃已被阻止 原因:") + e.what());
+}
+catch (...)
+{
+	logger.Info("“群成员退出” 出现崩溃已被阻止 原因:未知");
+}
 
 
 //好友添加
 EVE_Request_AddFriend(addFriend)
+try
 {
 	if (g_otherSet.appRun == false)
 	{
@@ -120,10 +179,19 @@ EVE_Request_AddFriend(addFriend)
 	logger.testLog("End 好友添加");
 	return 0;
 }
+catch (exception & e)
+{
+	logger.Info(string("“好友添加” 出现崩溃已被阻止 原因:") + e.what());
+}
+catch (...)
+{
+	logger.Info("“好友添加” 出现崩溃已被阻止 原因:未知");
+}
 
 
 //群添加
 EVE_Request_AddGroup(addGroup)
+try
 {
 	if (g_otherSet.appRun == false)
 	{
@@ -143,10 +211,19 @@ EVE_Request_AddGroup(addGroup)
 	logger.testLog("End 群添加");
 	return 0;
 }
+catch (exception & e)
+{
+	logger.Info(string("“群添加” 出现崩溃已被阻止 原因:") + e.what());
+}
+catch (...)
+{
+	logger.Info("“群添加” 出现崩溃已被阻止 原因:未知");
+}
 
 
 //私聊消息
 EVE_PrivateMsg(privateMsg)
+try
 {
 	if (g_otherSet.appRun == false)
 	{
@@ -155,11 +232,20 @@ EVE_PrivateMsg(privateMsg)
 	}
 
 	return 0;
+}
+catch (exception & e)
+{
+	logger.Info(string("“私聊消息” 出现崩溃已被阻止 原因:") + e.what());
+}
+catch (...)
+{
+	logger.Info("“私聊消息” 出现崩溃已被阻止 原因:未知");
 }
 
 
 //群消息
 EVE_GroupMsg(groupMsg)
+try
 {
 	if (g_otherSet.appRun == false)
 	{
@@ -167,16 +253,25 @@ EVE_GroupMsg(groupMsg)
 		return 0;
 	}
 
-	logger.testLog("群消息");
+	//logger.testLog("群消息");
 	KeyWordMsg a(fromGroup, fromQQ, msg);
 	a.KeyWordFun();
-	logger.testLog("End 群消息");
+	//logger.testLog("End 群消息");
 	return 0;
+}
+catch (exception & e)
+{
+	logger.Info(string("“群消息” 出现崩溃已被阻止 原因:") + e.what());
+}
+catch (...)
+{
+	logger.Info("“群消息” 出现崩溃已被阻止 原因:未知");
 }
 
 
 //菜单
 EVE_Menu(__menuSet)
+try
 {
 	if (g_otherSet.appRun == false)
 	{
@@ -192,4 +287,12 @@ EVE_Menu(__menuSet)
 
 	logger.testLog("End 菜单");
 	return 0;
+}
+catch (exception & e)
+{
+	logger.Info(string("“菜单” 出现崩溃已被阻止 原因:") + e.what());
+}
+catch (...)
+{
+	logger.Info("“菜单” 出现崩溃已被阻止 原因:未知");
 }
