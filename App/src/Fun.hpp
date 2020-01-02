@@ -334,27 +334,9 @@ private:
 	//检查更新
 	static bool update();
 
+	//初始化群
 	static void initGroup();
-	/*
-	//定时读取关键词
-	static void read_keyWordTime();
-
-
-	//定时读取邮箱列表
-	static void read_emailListTime();
-
-
-	//定时读取内容列表
-	static void read_wordListTime();
-
-	//定时读取监控群
-	static void read_groupListTime();
-
-
-	//定时读取其他配置
-	static void read_OtherTime();
-
-	*/
+	
 	//读取关键词
 	static void read_keyWord();
 
@@ -474,23 +456,11 @@ private:
 
 
 
+/****************************************************
 
+					实现部分
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+*****************************************************/
 
 
 
