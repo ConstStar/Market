@@ -582,8 +582,10 @@ void WEmailTest::MsgValue(string& str)
 	replace_all_distinct(str, "{星期}", Week);
 
 	//触发的QQ号码
-	replace_all_distinct(str, "{QQ号码}", to_string(123456789));
+	replace_all_distinct(str, "{QQ号码}", to_string(12345678));
 
+	//群号码
+	replace_all_distinct(str, "{群号码}", to_string(87654321));
 
 	//触发的QQ名称
 	replace_all_distinct(str, "{QQ名称}", "昵称");
@@ -593,6 +595,16 @@ void WEmailTest::MsgValue(string& str)
 
 	//触发的群名称
 	replace_all_distinct(str, "{群名称}", "群名称");
+
+
+	//地区
+	replace_all_distinct(str, "{地区}", "北京");
+
+
+	replace_all_distinct(str, "{性别}", "男");
+
+	//年龄
+	replace_all_distinct(str, "{年龄}", "18");
 
 	//随机数变量
 	replace_all_random(str);

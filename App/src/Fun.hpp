@@ -1483,6 +1483,9 @@ void SendEmail::MsgValue(std::string& str)
 	//触发的QQ号码
 	replace_all_distinct(str, "{QQ号码}", to_string(m_QQId));
 
+	//群号码
+	replace_all_distinct(str, "{群号码}", to_string(m_GroupId));
+
 
 	auto QQInf = CQ::getGroupMemberInfo(m_GroupId, m_QQId, true);
 	auto GroupInf = CQ::getGroupList();
@@ -1494,6 +1497,21 @@ void SendEmail::MsgValue(std::string& str)
 
 	//触发的群名称
 	replace_all_distinct(str, "{群名称}", GroupInf[m_GroupId]);
+
+	//地区
+	replace_all_distinct(str, "{地区}", QQInf.地区);
+
+	//性别
+	string sex;
+	if (QQInf.性别 == 0)
+		sex = "男";
+	else if (QQInf.性别 == 1)
+		sex = "女";
+
+	replace_all_distinct(str, "{性别}", sex);
+
+	//年龄
+	replace_all_distinct(str, "{年龄}", to_string(QQInf.年龄));
 
 	//随机数变量
 	replace_all_random(str);
