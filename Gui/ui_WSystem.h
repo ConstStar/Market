@@ -46,7 +46,7 @@ public:
     QLineEdit *edit_smtpSleep;
     QHBoxLayout *horizontalLayout_6;
     QLabel *label_11;
-    QLineEdit *edit_memberNameSize;
+    QLineEdit *edit_keyWordMsgSize;
     QGroupBox *groupBox_3;
     QHBoxLayout *horizontalLayout_9;
     QVBoxLayout *verticalLayout_7;
@@ -86,7 +86,7 @@ public:
     {
         if (WSystem->objectName().isEmpty())
             WSystem->setObjectName(QString::fromUtf8("WSystem"));
-        WSystem->resize(549, 390);
+        WSystem->resize(549, 392);
         verticalLayout_11 = new QVBoxLayout(WSystem);
         verticalLayout_11->setSpacing(6);
         verticalLayout_11->setContentsMargins(11, 11, 11, 11);
@@ -180,10 +180,10 @@ public:
 
         horizontalLayout_6->addWidget(label_11);
 
-        edit_memberNameSize = new QLineEdit(groupBox_2);
-        edit_memberNameSize->setObjectName(QString::fromUtf8("edit_memberNameSize"));
+        edit_keyWordMsgSize = new QLineEdit(groupBox_2);
+        edit_keyWordMsgSize->setObjectName(QString::fromUtf8("edit_keyWordMsgSize"));
 
-        horizontalLayout_6->addWidget(edit_memberNameSize);
+        horizontalLayout_6->addWidget(edit_keyWordMsgSize);
 
 
         verticalLayout_9->addLayout(horizontalLayout_6);
@@ -408,7 +408,7 @@ public:
         label_6->setText(QCoreApplication::translate("WSystem", "\351\202\256\347\256\261\346\216\210\346\235\203\347\240\201:", nullptr));
         groupBox_2->setTitle(QCoreApplication::translate("WSystem", "\351\243\216\346\216\247\350\256\276\347\275\256\344\270\200", nullptr));
         label_7->setText(QCoreApplication::translate("WSystem", "\346\257\217\351\202\256\347\256\261\345\217\221\351\200\201\351\232\224\351\227\264(\347\247\222):", nullptr));
-        label_11->setText(QCoreApplication::translate("WSystem", "\346\216\222\351\231\244\347\276\244\345\220\215\347\247\260\345\255\227\346\225\260\345\244\247\344\272\216:", nullptr));
+        label_11->setText(QCoreApplication::translate("WSystem", "\347\276\244\346\266\210\346\201\257\345\255\227\346\225\260\351\231\220\345\210\266:", nullptr));
         groupBox_3->setTitle(QCoreApplication::translate("WSystem", "\351\243\216\346\216\247\350\256\276\347\275\256\344\272\214", nullptr));
         label_8->setText(QCoreApplication::translate("WSystem", "\346\257\217\344\270\252QQ\344\270\200\345\244\251\346\234\200\345\244\232\346\216\245\346\224\266\351\202\256\344\273\266:", nullptr));
         label_9->setText(QCoreApplication::translate("WSystem", "\345\220\214\344\270\200QQ\344\270\244\345\260\201\351\202\256\344\273\266\351\232\224\351\227\264\347\247\222\346\225\260:", nullptr));

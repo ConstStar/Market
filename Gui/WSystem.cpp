@@ -60,10 +60,10 @@ bool WSystem::readConf()
 		QString temp_oneGroupEmail = QString::fromLocal8Bit(to_string(value.get<int>(L"Main.OneGroupEmail", 0)).c_str());
 		QString temp_oneGroupTime = QString::fromLocal8Bit(to_string(value.get<int>(L"Main.OneGroupTime", 0)).c_str());
 
-		QString temp_memberNameSize = QString::fromLocal8Bit(to_string(value.get<int>(L"Main.MemberNameSize", 0)).c_str());
+		QString temp_keyWordMsgSize = QString::fromLocal8Bit(to_string(value.get<int>(L"Main.KeyWordMsgSize", 0)).c_str());
 
 
-		ui.edit_memberNameSize->setText(temp_memberNameSize);
+		ui.edit_keyWordMsgSize->setText(temp_keyWordMsgSize);
 
 		ui.edit_oneGroupEmail->setText(temp_oneGroupEmail);
 		ui.edit_oneGroupTime->setText(temp_oneGroupTime);
@@ -116,7 +116,7 @@ bool WSystem::writeConf()
 		child.value().put<int>(L"OneGroupTime", ui.edit_oneGroupTime->text().toInt());
 		child.value().put<int>(L"OneGroupEmail", ui.edit_oneGroupEmail->text().toInt());
 
-		child.value().put<int>(L"MemberNameSize", ui.edit_memberNameSize->text().toInt());
+		child.value().put<int>(L"KeyWordMsgSize", ui.edit_keyWordMsgSize->text().toInt());
 
 		json::write_json(appFile + "conf.json", value);
 		Conf::makeUpdate();

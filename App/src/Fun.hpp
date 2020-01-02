@@ -76,7 +76,7 @@ struct CONF_OTHER
 		, oneQQSleep(0)
 		, oneGroupTime(0)
 		, oneGroupEmail(0)
-		, memberNameSize(0)
+		, keyWordMsgSize(0)
 	{}
 
 	//设置类
@@ -95,7 +95,7 @@ struct CONF_OTHER
 	int oneGroupTime;
 	int oneGroupEmail;
 
-	int memberNameSize;//群名称最大字数限制
+	int keyWordMsgSize;//消息内容最大字数限制
 
 	//秘钥类
 	string key;
@@ -334,7 +334,7 @@ private:
 	//检查更新
 	static bool update();
 
-
+	static void initGroup();
 	/*
 	//定时读取关键词
 	static void read_keyWordTime();
@@ -430,31 +430,13 @@ public:
 	//检测接受QQ是否满足条件  接受不大于限制次数  不在未开通QQ邮箱列表中
 	bool isQQList();
 
+	bool isGroup();
+
 	//验证邮箱可用性
 	bool isVerify();
 
 	//修改统计数量   今发和累发
 	void countFinish(string& email, int num);
-
-	////字符串替换
-	//string replace_line(string str)
-	//{
-	//	string temp;
-
-	//	for (auto one : str)
-	//	{
-	//		if (one = '\n')
-	//		{
-	//			temp += "\r\n";
-	//		}
-	//		else
-	//		{
-	//			temp += one;
-	//		}
-	//	}
-
-	//	return temp;
-	//}
 
 
 public:
@@ -544,8 +526,11 @@ vector<CONF_EMAIL> g_emailList;
 vector<CONF_WORD> g_wordList;
 vector<long long> g_groupList;
 vector<wstring> g_keyWord;
+
 map<std::string, EMAIL_LIMIT> g_emailLimit;
 map<long long, QQ_LIMIT> g_QQList;
+
+map<long long, int> g_oneGroup;
 /*****************************************/
 string phpPath(".\\PHPRun");
 string phpFile(".\\PHPRun\\Core\\php.exe");
@@ -575,6 +560,9 @@ void Conf::initConf()
 
 	//更新时间
 	updataTime();
+
+	//初始化群配置
+	initGroup();
 }
 
 //秘钥对比
@@ -860,6 +848,24 @@ void Conf::initConfTime()
 	pKeyWord->detach();
 }
 
+void Conf::initGroup()
+{
+	auto ph = new std::thread([]
+		{
+			while (true)
+			{
+				if (g_otherSet.oneGroupTime)
+				{
+					g_oneGroup.clear();
+				}
+
+				Sleep(g_otherSet.oneGroupTime * 1000);
+			}
+
+		});
+
+}
+
 //检查更新
 bool Conf::update()
 {
@@ -930,58 +936,11 @@ void Conf::read_keyWord()
 
 		g_keyWord = temp_keyWord;
 	}
-	//catch (exception & e)
-	//{
-	//	QMessageBox::warning(NULL, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit(e.what()), QMessageBox::Ok);
-	//	//MessageBoxA(NULL, e.what(), "错误", MB_OK);
-	//	return;
-	//}
 	catch (...)
 	{
 		return;
 	}
 }
-
-/*
-
-//定时读取关键词
-void Conf::read_keyWordTime()
-{
-	read_keyWord();
-}
-
-
-//定时读取邮箱列表
-void Conf::read_emailListTime()
-{
-
-	read_emailList();
-
-}
-
-
-//定时读取内容列表
-void Conf::read_wordListTime()
-{
-	read_wordList();
-}
-
-//定时读取监控群
-void Conf::read_groupListTime()
-{
-	read_groupList();
-}
-
-
-//定时读取其他配置
-void Conf::read_OtherTime()
-{
-	read_Other();
-}
-
-
-*/
-
 
 //读取邮箱列表
 bool Conf::read_emailList()
@@ -1140,7 +1099,7 @@ bool Conf::read_Other()
 		g_otherSet.oneGroupTime = value.get<int>(L"Main.OneGroupTime", 0);
 		g_otherSet.oneGroupEmail = value.get<int>(L"Main.OneGroupEmail", 0);
 
-		g_otherSet.memberNameSize = value.get<int>(L"Main.MemberNameSize", 0);
+		g_otherSet.keyWordMsgSize = value.get<int>(L"Main.KeyWordMsgSize", 0);
 
 
 		g_otherSet.verifyEmail = OperateStr::wstring2string(value.get<wstring>(L"Main.VerifyEmail", L""));
@@ -1222,57 +1181,7 @@ void OpenWin::openKeyWin()
 
 		WinExec("MarketWin.exe MarketKey", SW_SHOW);
 
-		/*
-		string strComData(OperateStr::wstring2string(ss.str()));        // 共享内存中的数据
 
-		wstring strMapName(L"MarketKey");                // 内存映射对象名称
-		LPVOID pBuffer;                                    // 共享内存指针
-
-		// 首先试图打开一个命名的内存映射文件对象
-		HANDLE hMap = ::OpenFileMapping(FILE_MAP_ALL_ACCESS, 0, strMapName.c_str());
-		if (NULL == hMap)
-		{    // 打开失败，创建之
-			hMap = ::CreateFileMapping(INVALID_HANDLE_VALUE,
-				NULL,
-				PAGE_READWRITE,
-				0,
-				strComData.length() + 1,
-				strMapName.c_str());
-			// 映射对象的一个视图，得到指向共享内存的指针，设置里面的数据
-			pBuffer = ::MapViewOfFile(hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-			strcpy((char*)pBuffer, strComData.c_str());
-		}
-		else
-		{
-			MessageBox(NULL, L"已有一个界面在运行中,请重新启动酷Q", L"错误", MB_OK);
-
-			return;
-			// 打开成功，映射对象的一个视图，得到指向共享内存的指针，显示出里面的数据
-			//pBuffer = ::MapViewOfFile(hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-		}
-
-		//以堵塞模式打开exe
-		SHELLEXECUTEINFO ShExecInfo = { 0 };
-		ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
-		ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-		ShExecInfo.hwnd = NULL;
-		ShExecInfo.lpVerb = NULL;
-		ShExecInfo.lpFile = L"MarketWin.exe";
-		ShExecInfo.lpParameters = L" MarketKey";
-		ShExecInfo.lpDirectory = NULL;
-		ShExecInfo.nShow = SW_SHOW;
-		ShExecInfo.hInstApp = NULL;
-		ShellExecuteEx(&ShExecInfo);
-		WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
-
-		// 解除文件映射，关闭内存映射文件对象句柄
-		::UnmapViewOfFile(pBuffer);
-		::CloseHandle(hMap);
-
-		//读取全部配置
-		Conf::readConfAll();
-
-		*/
 	}
 	catch (exception & e)
 	{
@@ -1363,59 +1272,7 @@ bool OpenWin::openWin()
 		file.close();
 
 		WinExec("MarketWin.exe MarketWin", SW_SHOW);
-#if 0
 
-		string strComData(OperateStr::wstring2string(ss.str()));        // 共享内存中的数据
-
-		wstring strMapName(L"MarketWin");                // 内存映射对象名称
-		LPVOID pBuffer;                                    // 共享内存指针
-
-		// 首先试图打开一个命名的内存映射文件对象  
-		HANDLE hMap = ::OpenFileMapping(FILE_MAP_ALL_ACCESS, 0, strMapName.c_str());
-		if (NULL == hMap)
-		{    // 打开失败，创建之
-			hMap = ::CreateFileMapping(INVALID_HANDLE_VALUE,
-				NULL,
-				PAGE_READWRITE,
-				0,
-				strComData.length() + 1,
-				strMapName.c_str());
-			// 映射对象的一个视图，得到指向共享内存的指针，设置里面的数据
-			pBuffer = ::MapViewOfFile(hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-			strcpy((char*)pBuffer, strComData.c_str());
-		}
-		else
-		{
-			logger.myError("界面打开失败", "已有一个界面在运行中,请重新启动酷Q");
-
-			return false;
-			// 打开成功，映射对象的一个视图，得到指向共享内存的指针，显示出里面的数据
-			//pBuffer = ::MapViewOfFile(hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-		}
-
-		//以堵塞模式打开exe
-		SHELLEXECUTEINFO ShExecInfo = { 0 };
-		ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
-		ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-		ShExecInfo.hwnd = NULL;
-		ShExecInfo.lpVerb = NULL;
-		ShExecInfo.lpFile = L"MarketWin.exe";
-		ShExecInfo.lpParameters = L" MarketWin";
-		ShExecInfo.lpDirectory = NULL;
-		ShExecInfo.nShow = SW_SHOW;
-		ShExecInfo.hInstApp = NULL;
-		ShellExecuteEx(&ShExecInfo);
-		WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
-
-
-		// 解除文件映射，关闭内存映射文件对象句柄
-		::UnmapViewOfFile(pBuffer);
-		::CloseHandle(hMap);
-
-
-		//读取全部配置
-		Conf::readConfAll();
-#endif
 	}
 	catch (exception & e)
 	{
@@ -1459,58 +1316,6 @@ bool OpenWin::update()
 
 		WinExec("MarketWin.exe MarketUpdate", SW_SHOW);
 
-		/*
-		string strComData(OperateStr::wstring2string(ss.str()));        // 共享内存中的数据
-
-		wstring strMapName(L"MarketUpdate");                // 内存映射对象名称
-		LPVOID pBuffer;                                    // 共享内存指针
-
-		// 首先试图打开一个命名的内存映射文件对象
-		HANDLE hMap = ::OpenFileMapping(FILE_MAP_ALL_ACCESS, 0, strMapName.c_str());
-		if (NULL == hMap)
-		{    // 打开失败，创建之
-			hMap = ::CreateFileMapping(INVALID_HANDLE_VALUE,
-				NULL,
-				PAGE_READWRITE,
-				0,
-				strComData.length() + 1,
-				strMapName.c_str());
-			// 映射对象的一个视图，得到指向共享内存的指针，设置里面的数据
-			pBuffer = ::MapViewOfFile(hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-			strcpy((char*)pBuffer, strComData.c_str());
-		}
-		else
-		{
-			logger.myError("界面打开失败", "已有一个界面在运行中,请重新启动酷Q");
-
-			return false;
-			// 打开成功，映射对象的一个视图，得到指向共享内存的指针，显示出里面的数据
-			//pBuffer = ::MapViewOfFile(hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-		}
-
-		//以堵塞模式打开exe
-		SHELLEXECUTEINFO ShExecInfo = { 0 };
-		ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
-		ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
-		ShExecInfo.hwnd = NULL;
-		ShExecInfo.lpVerb = NULL;
-		ShExecInfo.lpFile = L"MarketWin.exe";
-		ShExecInfo.lpParameters = L" MarketUpdate";
-		ShExecInfo.lpDirectory = NULL;
-		ShExecInfo.nShow = SW_SHOW;
-		ShExecInfo.hInstApp = NULL;
-		ShellExecuteEx(&ShExecInfo);
-		WaitForSingleObject(ShExecInfo.hProcess, INFINITE);
-
-		// 解除文件映射，关闭内存映射文件对象句柄
-		::UnmapViewOfFile(pBuffer);
-		::CloseHandle(hMap);
-
-
-		//读取全部配置
-		Conf::readConfAll();
-
-		*/
 	}
 	catch (exception & e)
 	{
@@ -1615,42 +1420,9 @@ void SendEmail::send()
 	MsgValue(temp_title);
 	MsgValue(temp_name);
 
-	//Csmtp email(m_smtp.port, m_smtp.smtp, m_smtp.email, m_smtp.passwd, temp_name);
-	//email.setTarget(to_string(m_QQId) + "@qq.com");
-	//email.setTitle(temp_title);
 
 	logger.testLog("变量构造完成");
-	//email.setContent(temp_word);
 
-	//string temp_word = replace_line(m_word.word);
-
-/*	fstream test("test.txt");
-	test << temp_word;
-	test.close();
-	logger.Info(temp_word);*/
-
-
-	/*设置格式*/
-
-	//设置html格式
-//	email.setHtml(g_otherSet.useHtml);
-
-	////建立连接
-	//if (email.CReateSocket() == false)
-	//{
-	//	string error = email.getInf();
-
-	//	if (error.empty())
-	//	{
-	//		error = "未知原因";
-	//	}
-
-	//	//计数减一
-	//	countFinish(m_smtp.email, -1);
-	//	logger.sqlLog(m_GroupId, m_QQId, "发送失败", (string("连接错误 ") + "原因:" + error + " " + log.str()).c_str());
-
-	//	return;
-	//}
 
 	phpSendEmail email
 	(
@@ -1926,8 +1698,30 @@ bool SendEmail::isOk()
 		return false;
 	}
 
+	//检查群是否满足发送条件
+	if (isGroup() == false)
+	{
+		return false;
+	}
+
 	if (isVerify() == false)
 	{
+		return false;
+	}
+
+	return true;
+}
+
+
+//检测是否满足群
+bool SendEmail::isGroup()
+{
+	if (g_otherSet.oneGroupEmail != 0 && g_oneGroup[m_GroupId] > g_otherSet.oneGroupEmail)
+	{
+		string inf;
+		inf = "此群在" + to_string(g_otherSet.oneGroupTime) + "秒内发送邮件超过" + to_string(g_otherSet.oneGroupEmail) + "封";
+
+		logger.sqlLog(m_GroupId, m_QQId, "发送失败", inf.c_str());
 		return false;
 	}
 
@@ -2002,7 +1796,7 @@ void SendEmail::countFinish(string& email, int num)
 	g_otherSet.countDay += num;
 	g_otherSet.countAll += num;
 	g_emailLimit[email].dayNum += num;
-
+	g_oneGroup[m_GroupId] += num;
 
 	if (g_otherSet.countDay < 0)
 	{
@@ -2018,29 +1812,18 @@ void SendEmail::countFinish(string& email, int num)
 	Conf::updataCount();
 }
 
-////字符串替换
-//string replace_line(string str)
-//{
-//	string temp;
-//	for (auto one : str)
-//	{
-//		if (one = '\n')
-//		{
-//			temp += "\r\n";
-//		}
-//		else
-//		{
-//			temp += one;
-//		}
-//	}
-
-//	return temp;
-//}
 
 
 //关键词监测
 bool KeyWordMsg::KeyWordFun()
 {
+
+	if (m_wmsg.size() > g_otherSet.keyWordMsgSize)
+	{
+		return false;
+	}
+
+
 	//普通关键词检测
 	for (auto KeyWord_one : g_keyWord)
 	{

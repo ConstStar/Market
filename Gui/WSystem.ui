@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>549</width>
-    <height>390</height>
+    <height>392</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -105,12 +105,12 @@
               <item>
                <widget class="QLabel" name="label_11">
                 <property name="text">
-                 <string>排除群名称字数大于:</string>
+                 <string>群消息字数限制:</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="edit_memberNameSize"/>
+               <widget class="QLineEdit" name="edit_keyWordMsgSize"/>
               </item>
              </layout>
             </item>
