@@ -83,43 +83,43 @@ public:
 	{
 
 		//mysql
-		if (myFreeFile(IDR_DLL1, L"DLL", L"bin/libcrypto-1_1.dll") == false)
+		if (myFreeFindFile(IDR_DLL1, L"DLL", L"bin/libcrypto-1_1.dll") == false)
 			return false;
 
-		if (myFreeFile(IDR_DLL2, L"DLL", L"bin/libssl-1_1.dll") == false)
+		if (myFreeFindFile(IDR_DLL2, L"DLL", L"bin/libssl-1_1.dll") == false)
 			return false;
 
-		if (myFreeFile(IDR_DLL3, L"DLL", L"bin/mysqlcppconn-7-vs14.dll") == false)
+		if (myFreeFindFile(IDR_DLL3, L"DLL", L"bin/mysqlcppconn-7-vs14.dll") == false)
 			return false;
 
 		if (myFreeFile(IDR_DLL10, L"DLL", L"bin/MySql.dll") == false)
 			return false;
 
 		//curl
-		if (myFreeFile(IDR_DLL11, L"DLL", L"bin/libcurl.dll") == false)
+		if (myFreeFindFile(IDR_DLL11, L"DLL", L"bin/libcurl.dll") == false)
 			return false;
 
 		//QT
 		_wmkdir(L".\\platforms");
-		if (myFreeFile(IDR_DLL8, L"DLL", L"platforms/qwindows.dll") == false)
+		if (myFreeFindFile(IDR_DLL8, L"DLL", L"platforms/qwindows.dll") == false)
 			return false;
 
 		_wmkdir(L".\\sqldrivers");
-		if (myFreeFile(IDR_DLL9, L"DLL", L"sqldrivers/qsqlite.dll") == false)
+		if (myFreeFindFile(IDR_DLL9, L"DLL", L"sqldrivers/qsqlite.dll") == false)
 			return false;
 
 
 
-		if (myFreeFile(IDR_DLL4, L"DLL", L"bin/Qt5Core.dll") == false)
+		if (myFreeFindFile(IDR_DLL4, L"DLL", L"bin/Qt5Core.dll") == false)
 			return false;
 
-		if (myFreeFile(IDR_DLL5, L"DLL", L"bin/Qt5Gui.dll") == false)
+		if (myFreeFindFile(IDR_DLL5, L"DLL", L"bin/Qt5Gui.dll") == false)
 			return false;
 
-		if (myFreeFile(IDR_DLL6, L"DLL", L"bin/Qt5Sql.dll") == false)
+		if (myFreeFindFile(IDR_DLL6, L"DLL", L"bin/Qt5Sql.dll") == false)
 			return false;
 
-		if (myFreeFile(IDR_DLL7, L"DLL", L"bin/Qt5Widgets.dll") == false)
+		if (myFreeFindFile(IDR_DLL7, L"DLL", L"bin/Qt5Widgets.dll") == false)
 			return false;
 
 		//界面
@@ -169,6 +169,28 @@ public:
 	}
 
 private:
+	static bool myFreeFindFile(DWORD dwResName, LPCWSTR lpResType, LPCWSTR lpFilePathName)
+	{
+
+		HRSRC hResID = ::FindResource(g_hModule, MAKEINTRESOURCE(dwResName), lpResType);//查找资源
+		HGLOBAL hRes = ::LoadResource(g_hModule, hResID);//加载资源
+
+		DWORD dwResSize = ::SizeofResource(g_hModule, hResID);//得到待释放资源文件大小
+
+		std::wifstream in(lpFilePathName);
+		in.seekg(0, std::ios::end);
+		size_t size = in.tellg();
+		in.close();
+
+		if (size == dwResSize)
+		{
+			return true;
+		}
+
+		return myFreeFile(dwResName, lpResType, lpFilePathName);
+	}
+
+
 
 	//释放单个文件封装
 	static bool myFreeFile(DWORD dwResName, LPCWSTR lpResType, LPCWSTR lpFilePathName)

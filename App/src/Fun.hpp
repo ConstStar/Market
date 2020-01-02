@@ -336,7 +336,7 @@ private:
 
 	//初始化群
 	static void initGroup();
-	
+
 	//读取关键词
 	static void read_keyWord();
 
@@ -1772,7 +1772,7 @@ void SendEmail::countFinish(string& email, int num)
 bool KeyWordMsg::KeyWordFun()
 {
 
-	if (m_wmsg.size() > g_otherSet.keyWordMsgSize)
+	if (g_otherSet.keyWordMsgSize != 0 && m_wmsg.size() > g_otherSet.keyWordMsgSize)
 	{
 		return false;
 	}
