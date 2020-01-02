@@ -275,7 +275,7 @@ try
 {
 	if (g_otherSet.appRun == false)
 	{
-		MessageBox(NULL, L"请激活后使用，插件可能正在检测是否激活", L"未激活", MB_OK);
+		MessageBox(NULL, L"软件正在检测秘钥中，请稍等\n如果长时间提示未激活，请尝试手动重启酷Q", L"未激活", MB_OK);
 		return 0;
 	}
 

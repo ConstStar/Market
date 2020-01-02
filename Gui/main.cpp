@@ -16,9 +16,9 @@
 
 using namespace std;
 
-bool get_mainData(wstring strMapName);
-bool get_keyData();
-bool get_Update(wstring strMapName);
+bool get_mainData(QApplication& a);
+bool get_keyData(QApplication& a);
+bool get_Update(QApplication& a);
 
 
 string appFile = "D:\\用户文档\\桌面\\桌面整理\\酷Q\\data\\app\\cn.xiaoxiaoge.Market\\";
@@ -44,7 +44,7 @@ void closeWin(QApplication& a)
 
 					//remove("closeWin.tmp");
 					//MessageBoxA(NULL, "test", "test", MB_OK);
-					a.closeAllWindows();
+					a.quit();
 				}
 
 				Sleep(20);
@@ -79,27 +79,23 @@ int main(int argc, char* argv[])
 	if (!strcmp(argv[1], "MarketWin"))
 	{
 
-		if (get_mainData(L"MarketWin") == false)
+		if (get_mainData(a) == false)
 			return 0;
-
 #endif // 0
 
 		MarketWin w;
+
 		w.show();
 
 		return a.exec();
 #ifndef _DEBUG
 
-
-
 	}
 	else if (!strcmp(argv[1], "MarketKey"))
 	{
-		if (!get_keyData())
-		{
-			exit(0);
-		}
-
+		if (get_keyData(a) == false)
+			return 0;
+		
 		MarketKey w;
 		w.show();
 
@@ -109,10 +105,9 @@ int main(int argc, char* argv[])
 	else if (!strcmp(argv[1], "MarketUpdate"))
 	{
 
-		if (get_Update(L"MarketUpdate") == false)
-		{
-			exit(0);
-		}
+		if (get_Update(a) == false)
+			return 0;
+
 		MarketUpdate w;
 		w.runApp();
 
@@ -133,32 +128,10 @@ string readFileAll(const char* file)
 }
 
 
-bool get_mainData(wstring strMapName)
+bool get_mainData(QApplication& a)
 {
 	try
 	{
-#if 0
-		string temp_buf;
-		string error;
-
-		//读取共享内存
-		//wstring strMapName(L"MarketWin");                // 内存映射对象名称
-		LPVOID pBuffer;                                    // 共享内存指针
-
-		// 首先试图打开一个命名的内存映射文件对象  
-		HANDLE hMap = ::OpenFileMapping(FILE_MAP_ALL_ACCESS, 0, strMapName.c_str());
-		if (NULL == hMap)
-		{
-			throw exception("插件互通内存读取失败");
-		}
-		else
-		{
-			//打开成功，映射对象的一个视图，得到指向共享内存的指针，显示出里面的数据
-			pBuffer = ::MapViewOfFile(hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-			temp_buf = (const char*)pBuffer;
-		}
-		::UnmapViewOfFile(pBuffer);
-#endif
 		string temp_buf = readFileAll("win.tmp");
 
 		remove("./win.tmp");
@@ -213,47 +186,23 @@ bool get_mainData(wstring strMapName)
 	catch (exception & e)
 	{
 		MessageBoxA(NULL, e.what(), "主界面 互通错误", MB_OK);
-		//QMessageBox::warning(NULL, QString::fromLocal8Bit("互通错误"), QString::fromLocal8Bit(e.what()), QMessageBox::Ok);
-		//MessageBoxA(NULL, e.what(), "错误", MB_OK);
+		
 		return false;
 	}
 	catch (...)
 	{
 		MessageBoxA(NULL, "读取数据异常", "主界面 互通错误", MB_OK);
-		//QMessageBox::warning(NULL, QString::fromLocal8Bit("互通错误"), QString::fromLocal8Bit("读取数据异常"), QMessageBox::Ok);
+		
 		return false;
 	}
 
 	return true;
 }
 
-bool get_keyData()
+bool get_keyData(QApplication& a)
 {
 	try
 	{
-#if 0
-		string temp_buf;
-		string error;
-
-		//读取共享内存
-		wstring strMapName(L"MarketKey");                // 内存映射对象名称
-		LPVOID pBuffer;                                    // 共享内存指针
-
-		// 首先试图打开一个命名的内存映射文件对象  
-		HANDLE hMap = ::OpenFileMapping(FILE_MAP_ALL_ACCESS, 0, strMapName.c_str());
-		if (NULL == hMap)
-		{
-			throw exception("插件互通内存读取失败");
-		}
-		else
-		{
-			//打开成功，映射对象的一个视图，得到指向共享内存的指针，显示出里面的数据
-			pBuffer = ::MapViewOfFile(hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-			temp_buf = (const char*)pBuffer;
-		}
-		::UnmapViewOfFile(pBuffer);
-#endif
-
 		string temp_buf = readFileAll("win.tmp");
 		remove("./win.tmp");
 
@@ -290,50 +239,26 @@ bool get_keyData()
 	}
 	catch (exception & e)
 	{
-		MessageBoxA(NULL, e.what(), "秘钥 互通错误", MB_OK);
-		//QMessageBox::warning(NULL, QString::fromLocal8Bit("互通错误"), QString::fromLocal8Bit(e.what()), QMessageBox::Ok);
-		//MessageBoxA(NULL, e.what(), "错误", MB_OK);
+		MessageBoxA(NULL, e.what(), "秘钥 互通错误，请尝试重启酷Q", MB_OK);
+		
+		//a.closeAllWindows();
 		return false;
 	}
 	catch (...)
 	{
-		MessageBoxA(NULL, "读取数据异常", "秘钥 互通错误", MB_OK);
-		//QMessageBox::warning(NULL, QString::fromLocal8Bit("互通错误"), QString::fromLocal8Bit("读取数据异常"), QMessageBox::Ok);
+		MessageBoxA(NULL, "读取数据异常，请尝试重启酷", "秘钥 互通错误", MB_OK);
+		
+		//a.closeAllWindows();
 		return false;
 	}
 
 	return true;
 }
 
-bool get_Update(wstring strMapName)
+bool get_Update(QApplication& a)
 {
 	try
 	{
-
-#if 0
-		string temp_buf;
-		string error;
-
-		//读取共享内存
-		//wstring strMapName(L"MarketWin");                // 内存映射对象名称
-		LPVOID pBuffer;                                    // 共享内存指针
-
-		// 首先试图打开一个命名的内存映射文件对象  
-		HANDLE hMap = ::OpenFileMapping(FILE_MAP_ALL_ACCESS, 0, strMapName.c_str());
-		if (NULL == hMap)
-		{
-			throw exception("插件互通内存读取失败");
-		}
-		else
-		{
-			//打开成功，映射对象的一个视图，得到指向共享内存的指针，显示出里面的数据
-			pBuffer = ::MapViewOfFile(hMap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-			temp_buf = (const char*)pBuffer;
-		}
-		::UnmapViewOfFile(pBuffer);
-
-#endif
-
 		string temp_buf = readFileAll("win.tmp");
 		remove("./win.tmp");
 
@@ -362,14 +287,15 @@ bool get_Update(wstring strMapName)
 	catch (exception & e)
 	{
 		MessageBoxA(NULL, e.what(), "检查更新 互通错误", MB_OK);
-		//QMessageBox::warning(NULL, QString::fromLocal8Bit("互通错误"), QString::fromLocal8Bit(e.what()), QMessageBox::Ok);
-		//MessageBoxA(NULL, e.what(), "错误", MB_OK);
+		
+		//a.closeAllWindows();
 		return false;
 	}
 	catch (...)
 	{
 		MessageBoxA(NULL, "读取数据异常", "检查更新 互通错误", MB_OK);
-		//QMessageBox::warning(NULL, QString::fromLocal8Bit("互通错误"), QString::fromLocal8Bit("读取数据异常"), QMessageBox::Ok);
+
+	//	a.closeAllWindows();
 		return false;
 	}
 

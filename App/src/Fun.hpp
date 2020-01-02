@@ -1142,12 +1142,7 @@ void OpenWin::openKeyWin()
 
 
 		//转换为字符串
-		wstringstream ss;
-		boost::property_tree::write_json(ss, temp_json);
-
-		wfstream file("win.tmp", ios::out);
-		file << ss.str().c_str();
-		file.close();
+		json::write_json("win.tmp", temp_json);
 
 		WinExec("MarketWin.exe MarketKey", SW_SHOW);
 
@@ -1226,6 +1221,7 @@ bool OpenWin::openWin()
 		boost::property_tree::wptree temp_child;
 		temp_json.add_child(L"GroupList", boost::property_tree::wptree(L""));
 		auto GroupList = CQ::getGroupList();
+
 		for (auto temp : GroupList)
 		{
 			temp_child.put<wstring>(L"Name", OperateStr::string2wstring(temp.second));
@@ -1234,12 +1230,7 @@ bool OpenWin::openWin()
 		}
 
 		//转换为字符串
-		wstringstream ss;
-		boost::property_tree::write_json(ss, temp_json);
-
-		wfstream file("win.tmp", ios::out);
-		file << ss.str().c_str();
-		file.close();
+		json::write_json("win.tmp", temp_json);
 
 		WinExec("MarketWin.exe MarketWin", SW_SHOW);
 
@@ -1277,12 +1268,7 @@ bool OpenWin::update()
 
 
 		//转换为字符串
-		wstringstream ss;
-		boost::property_tree::write_json(ss, temp_json);
-
-		wfstream file("win.tmp", ios::out);
-		file << ss.str().c_str();
-		file.close();
+		json::write_json("win.tmp", temp_json);
 
 		WinExec("MarketWin.exe MarketUpdate", SW_SHOW);
 
@@ -1781,8 +1767,6 @@ void SendEmail::countFinish(string& email, int num)
 	//更新统计次数
 	Conf::updataCount();
 }
-
-
 
 //关键词监测
 bool KeyWordMsg::KeyWordFun()

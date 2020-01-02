@@ -52,7 +52,7 @@ void WWordList::readLastWrod()
 	{
 		boost::property_tree::wptree value;
 
-		read_json(appFile + "conf.json", value);
+		json::read_json(appFile + "conf.json", value);
 	
 		QString temp_name(QString::fromStdWString(value.get<wstring>(L"Win.WWordList_LastName", L"").c_str()));
 		QString temp_title(QString::fromStdWString(value.get<wstring>(L"Win.WWordList_LastTitle", L"").c_str()));
@@ -81,7 +81,7 @@ void WWordList::saveLastWrod()
 	try
 	{
 		boost::property_tree::wptree value;
-		read_json(appFile + "conf.json", value);
+		json::read_json(appFile + "conf.json", value);
 
 		//检测是否存在 不存在则创建一个
 		auto child = value.get_child_optional(L"Win");

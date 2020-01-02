@@ -81,7 +81,18 @@ public:
 	{
 		try
 		{
-			boost::property_tree::write_json(file_path, value);
+			wstringstream buf;
+			boost::property_tree::write_json(buf, value);
+
+			fstream file(file_path, ios::out);
+			if (!file.good())
+			{
+				file.close();
+				return false;
+			}
+
+			file << OperateStr::wstring2string(buf.str());
+			file.close();
 		}
 		catch (...)
 		{
