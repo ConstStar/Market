@@ -28,7 +28,6 @@ WEmailTest::WEmailTest(QWidget* parent)
 	readLastWrod();
 	read_emailList();
 	read_wordList();
-	get_otherConf();
 
 	//设置只能输入数字
 	QValidator* validator = new QIntValidator(0, 99999999999, this);
@@ -49,10 +48,7 @@ void WEmailTest::closeEvent(QCloseEvent* event)
 {
 
 	saveLastWrod();
-	/*if (ph)
-	{
-		delete ph;
-	}*/
+	
 }
 
 //保存上次输入的内容
@@ -178,14 +174,7 @@ bool WEmailTest::read_emailList()
 
 		//设置样式
 		ui.tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-		/*
-		ui.tableView->setFocusPolicy(Qt::NoFocus);
-		ui.tableView->setSelectionMode(QAbstractItemView::SingleSelection);
-		ui.tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-		ui.tableView->installEventFilter(this);
-		*/
-
-
+	
 
 		boost::property_tree::wptree value;
 		json::read_json(appFile + "conf.json", value);
@@ -306,6 +295,9 @@ void WEmailTest::onTest()
 			string putEmail;
 			//string file;
 
+			//读取其他配置
+			get_otherConf();
+
 			//接受消息的邮箱
 			putEmail = ui.edit_putEmail->text().toStdString();
 
@@ -349,11 +341,6 @@ void WEmailTest::onTest()
 					string port = m_model->item(i, 5)->text().toLocal8Bit();
 					bool ssl = !(m_model->item(i, 6)->text().isEmpty());
 
-					/*Csmtp email(port, smtp, emailText, passwd, name);
-					email.setTarget(putEmail);
-					email.setTitle(title);
-					email.setContent(word);*/
-
 					phpSendEmail email(
 						phpPath,
 						phpFile,
@@ -372,28 +359,9 @@ void WEmailTest::onTest()
 					/*设置格式*/
 
 					//设置html格式
-					//email.setHtml(otherCfg.useHtml);
+					email.setIsHtml(otherCfg.useHtml);
 
-					//建立连接
-					//if (email.CReateSocket() == false)
-					//{
-					//	string error = email.getInf();
-
-					//	if (error.empty())
-					//	{
-					//		error = "未知原因";
-					//	}
-
-					//	//修改提示内容
-					//	m_model->itemFromIndex(m_model->index(i, 2))->setText(QString::fromLocal8Bit("发送失败 错误信息:") + QString::fromLocal8Bit(error.c_str()));
-					//	ui.tableView->update(m_model->index(i, 2));
-
-					//	continue;
-					//}
-
-					//发送邮件
-					//if (email.SendMail() == false)
-
+				
 					QCoreApplication::processEvents();
 					bool ret = email.send();
 					QCoreApplication::processEvents();

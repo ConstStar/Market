@@ -163,7 +163,7 @@ public:
 
 		retInf = U2G(ExeCmd(cmdStr).c_str());
 
-		remove(tempPathFile.c_str());
+		//remove(tempPathFile.c_str());
 
 		if (retInf == "[Success]")
 			return true;
