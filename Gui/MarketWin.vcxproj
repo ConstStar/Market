@@ -150,7 +150,8 @@
       <ExecutionDescription>Uic'ing %(Identity)...</ExecutionDescription>
     </QtUic>
     <PostBuildEvent>
-      <Command>copy /Y "$(TargetPath)" "D:\用户文档\桌面\桌面整理\酷Q\$(TargetFileName)"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -218,7 +219,7 @@
       <ExecutionDescription>Uic'ing %(Identity)...</ExecutionDescription>
     </QtUic>
     <PostBuildEvent>
-      <Command>copy /Y "$(TargetPath)" "D:\用户文档\桌面\桌面整理\酷Q\$(TargetFileName)"
+      <Command>
 copy /Y "$(TargetPath)" "$(SolutionDir)File\$(TargetFileName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
