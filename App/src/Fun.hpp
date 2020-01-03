@@ -127,6 +127,25 @@ struct QQ_LIMIT
 	int dayNum;
 };
 
+
+
+////验证群
+//class GroupOk
+//{
+//	void check(long long groupId)
+//	{
+//
+//
+//
+//
+//	}
+//
+//
+//
+//
+//};
+
+
 //字符串处理
 class StrChange
 {
@@ -219,43 +238,43 @@ public:
 	}
 
 
-	//测试
-	void testLog(string str)
-	{
-		// 基于当前系统的当前日期/时间
-		time_t now = time(0);
+	////测试
+	//void testLog(string str)
+	//{
+	//	// 基于当前系统的当前日期/时间
+	//	time_t now = time(0);
 
-		// 把 now 转换为字符串形式
-		char* dt = ctime(&now);
+	//	// 把 now 转换为字符串形式
+	//	char* dt = ctime(&now);
 
-		ofstream file;
-		size_t srcSize = 0;
+	//	ofstream file;
+	//	size_t srcSize = 0;
 
-		ifstream fsRead("test.log", ios::in | ios::binary);
-		if (fsRead.good())
-		{
-			fsRead.seekg(0, fsRead.end);
-			srcSize = fsRead.tellg();
-			fsRead.close();
-		}
+	//	ifstream fsRead("test.log", ios::in | ios::binary);
+	//	if (fsRead.good())
+	//	{
+	//		fsRead.seekg(0, fsRead.end);
+	//		srcSize = fsRead.tellg();
+	//		fsRead.close();
+	//	}
 
-		if (srcSize > 20480)
-		{
-			file.open("test.log", ios::out);
-		}
-		else
-		{
-			file.open("test.log", ios::app);
-		}
+	//	if (srcSize > 20480)
+	//	{
+	//		file.open("test.log", ios::out);
+	//	}
+	//	else
+	//	{
+	//		file.open("test.log", ios::app);
+	//	}
 
 
-		if (file.good())
-		{
-			file << dt;
-			file << str << endl << endl;
-			file.close();
-		}
-	}
+	//	if (file.good())
+	//	{
+	//		file << dt;
+	//		file << str << endl << endl;
+	//		file.close();
+	//	}
+	//}
 
 	//重写info
 	void Info(string msg)
@@ -1340,7 +1359,6 @@ void SendEmail::send()
 	}
 
 
-	logger.testLog("准备发送");
 	auto QQInf = CQ::getStrangerInfo(m_QQId, true);
 	auto GroupInf = CQ::getGroupList();
 
@@ -1367,7 +1385,6 @@ void SendEmail::send()
 	stringstream log;
 	log << "使用邮箱:" << m_smtp.email.c_str() << " 发送内容标题:" << m_word.title.c_str();
 
-	logger.testLog("准备发送2");
 	string temp_word(m_word.word);
 	string temp_title(m_word.title);
 	string temp_name(m_word.name);
@@ -1375,9 +1392,6 @@ void SendEmail::send()
 	MsgValue(temp_word);
 	MsgValue(temp_title);
 	MsgValue(temp_name);
-
-
-	logger.testLog("变量构造完成");
 
 
 	phpSendEmail email
@@ -1421,9 +1435,7 @@ void SendEmail::send()
 		return;
 	}
 
-	logger.testLog("邮箱验证完成");
 	//发送邮件
-	//if (email.SendMail() == false)
 	if (email.send() == false)
 	{
 
@@ -1452,7 +1464,6 @@ void SendEmail::send()
 
 	logger.sqlLog(m_GroupId, m_QQId, "发送成功", (log.str() + " 返回信息:" + email.getInf()).c_str());
 
-	logger.testLog("发送完成");
 }
 
 
@@ -1486,24 +1497,12 @@ void SendEmail::MsgValue(std::string& str)
 	//群号码
 	replace_all_distinct(str, "{群号码}", to_string(m_GroupId));
 
-	
-	logger.testLog("测试");
 
 	auto memberList = CQ::getGroupMemberList(m_GroupId);
 	CQ::GroupMemberInfo QQGroupInf;
-	logger.testLog("测试1");
-	//for (auto temp : memberList)
-	//{
-	//	if (temp.QQID == m_QQId)
-	//	{
-	//		QQGroupInf = temp;
-	//		break;
-	//	}
-	//}
 
 	auto QQInf = CQ::getStrangerInfo(m_QQId, true);
 	auto GroupInf = CQ::getGroupList();
-	logger.testLog("测试2");
 
 	//触发的QQ名称
 	replace_all_distinct(str, "{QQ名称}", QQInf.nick);
@@ -1633,7 +1632,6 @@ void SendEmail::replace_all_random(string& str)
 //获取发送内容与邮箱
 bool SendEmail::getSendData()
 {
-	logger.testLog("开始获取内容");
 	//更新时间
 	Conf::updataTime();
 
@@ -1654,7 +1652,6 @@ bool SendEmail::getSendData()
 		}
 	}
 
-	logger.testLog("end 获取发送邮箱账号");
 	long long smtpSleep = time(NULL);
 
 	if (g_otherSet.smtpSleep > smtpSleep - g_emailLimit[m_smtp.email].sleep)
@@ -1668,7 +1665,6 @@ bool SendEmail::getSendData()
 	//获取发送邮箱内容
 	m_word = getWord();
 
-	logger.testLog("end 获取发送邮箱内容");
 	return true;
 }
 
@@ -1817,8 +1813,6 @@ bool KeyWordMsg::KeyWordFun()
 	{
 		if (m_wmsg.find(KeyWord_one) != std::wstring::npos)
 		{
-			logger.testLog("触发普通关键词检测");
-
 			SendEmail a(m_fromGroup, m_fromQQ, "触发关键词");
 			a.send();
 
@@ -1858,8 +1852,6 @@ bool KeyWordMsg::KeyWordFun()
 			//触发强力检测后
 			if (temp_num_find >= temp_num)
 			{
-				logger.testLog("触发强力关键词检测");
-
 				SendEmail a(m_fromGroup, m_fromQQ, "触发关键词");
 				a.send();
 			}

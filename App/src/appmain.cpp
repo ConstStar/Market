@@ -37,20 +37,16 @@ try
 
 		}
 	);
-	logger.testLog("应用已被启用");
-
+	
 	//检查是否为第一次启动
 	if (FreeResFile::oneStart() == false)
 		return 0;
 
 
-	logger.testLog("End oneStart");
-
 	ph->detach();
 	Conf::keyFun();
 	Conf::initConf();
 
-	logger.testLog("End 应用被启用");
 	logger.Info("应用被启用");
 	return 0;
 }
@@ -69,7 +65,6 @@ EVE_Disable(Disable)
 try
 {
 	logger.Info("应用被停用");
-	logger.testLog("应用被停用");
 
 	OpenWin::close();
 
@@ -88,8 +83,6 @@ catch (...)
 EVE_Exit(Exit)
 {
 	logger.Info("酷Q关闭");
-	logger.testLog("酷Q关闭");
-
 	OpenWin::close();
 
 	return 0;
@@ -112,10 +105,8 @@ try
 		logger.Info("请先激活软件");
 	}
 
-	logger.testLog("群成员添加");
 	SendEmail a(fromGroup, beingOperateQQ, "成员进群");
 	a.send();
-	logger.testLog("End 群成员添加");
 
 	return 0;
 }
@@ -140,14 +131,12 @@ try
 
 		return 0;
 	}
-	logger.testLog("群成员退出");
 
 	if (g_otherSet.quitGroupSend)
 	{
 		SendEmail a(fromGroup, beingOperateQQ, "成员退群");
 		a.send();
 	}
-	logger.testLog("End 群成员退出");
 	return 0;
 }
 catch (exception & e)
@@ -170,13 +159,11 @@ try
 		return 0;
 	}
 
-	logger.testLog("好友添加");
 	if (g_otherSet.addFriend)
 	{
 		CQ::setFriendAddRequest(responseFlag, 请求_通过, "");
 	}
 
-	logger.testLog("End 好友添加");
 	return 0;
 }
 catch (exception & e)
@@ -198,8 +185,6 @@ try
 		logger.Info("请先激活软件");
 		return 0;
 	}
-
-	logger.testLog("群添加");
 	if (subType == 2)
 	{
 		if (g_otherSet.addGroupInto)
@@ -208,7 +193,6 @@ try
 		}
 
 	}
-	logger.testLog("End 群添加");
 	return 0;
 }
 catch (exception & e)
@@ -279,13 +263,11 @@ try
 		return 0;
 	}
 
-	logger.testLog("菜单");
 	if (OpenWin::openWin() == false)
 	{
 		MessageBox(NULL, L"界面打开失败,请查看日志中错误原因", L"失败", MB_OK);
 	}
 
-	logger.testLog("End 菜单");
 	return 0;
 }
 catch (exception & e)

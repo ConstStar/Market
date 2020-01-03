@@ -21,9 +21,6 @@
     <ClCompile Include="src\main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\Email.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="src\sqlite3.c">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -33,18 +30,12 @@
     <ClCompile Include="src\ComputerId.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\SmtpEmail.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\APPINFO.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\json.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Email.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\myData.hpp">
@@ -66,9 +57,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\Fun.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\SmtpEmail.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\appInf.h">

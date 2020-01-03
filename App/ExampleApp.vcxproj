@@ -105,24 +105,20 @@ copy /Y "$(SolutionDir)App\cn.xiaoxiaoge.Market.json" "D:\用户文档\桌面\�
   <ItemGroup>
     <ClCompile Include="src\appmain.cpp" />
     <ClCompile Include="src\ComputerId.cpp" />
-    <ClCompile Include="src\Email.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MD5.cpp" />
-    <ClCompile Include="src\SmtpEmail.cpp" />
     <ClCompile Include="src\sqlite3.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\appInf.h" />
     <ClInclude Include="src\APPINFO.h" />
-    <ClInclude Include="src\Email.h" />
     <ClInclude Include="src\FreeResFile.hpp" />
     <ClInclude Include="src\Fun.hpp" />
     <ClInclude Include="src\json.hpp" />
     <ClInclude Include="src\MD5.h" />
     <ClInclude Include="src\myData.hpp" />
     <ClInclude Include="src\mysql.hpp" />
-    <ClInclude Include="src\SmtpEmail.h" />
     <ClInclude Include="src\sqlite3.h" />
   </ItemGroup>
   <ItemGroup>
