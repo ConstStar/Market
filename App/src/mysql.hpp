@@ -73,26 +73,3 @@ public:
 	}
 
 };
-
-//bool test(string& id)
-//{
-//	if (id == "123")
-//		return true;
-//	else
-//		return false;
-//}
-//
-//int main()
-//{
-//	string key = "1";
-//	string local_Computer = "1234";
-//	string QQId = "1164442003";
-//	string ExceedDateTime;
-//
-//	keyUsing(key, local_Computer, QQId, test);
-//
-//
-//	cout << "到期时间 " << ExceedDateTime << endl;
-//
-//	return 0;
-//}

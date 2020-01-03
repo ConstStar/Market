@@ -117,7 +117,6 @@ copy /Y "$(SolutionDir)App\cn.xiaoxiaoge.Market.json" "D:\用户文档\桌面\�
     <ClInclude Include="src\Fun.hpp" />
     <ClInclude Include="src\json.hpp" />
     <ClInclude Include="src\MD5.h" />
-    <ClInclude Include="src\myData.hpp" />
     <ClInclude Include="src\mysql.hpp" />
     <ClInclude Include="src\sqlite3.h" />
   </ItemGroup>

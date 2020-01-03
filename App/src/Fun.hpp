@@ -2,7 +2,6 @@
 #include <string>
 #include <map>
 
-#include "myData.hpp"
 #include "json.hpp"
 
 #include "sqlite3.h"
@@ -936,7 +935,7 @@ bool Conf::read_emailList()
 {
 	try
 	{
-		myVector<CONF_EMAIL> temp_emailList;
+		vector<CONF_EMAIL> temp_emailList;
 
 		boost::property_tree::wptree value;
 		json::read_json(appFile + "conf.json", value);
@@ -995,7 +994,7 @@ bool Conf::read_wordList()
 {
 	try
 	{
-		myVector<CONF_WORD> temp_wordList;
+		vector<CONF_WORD> temp_wordList;
 
 		boost::property_tree::wptree value;
 		json::read_json(appFile + "conf.json", value);
