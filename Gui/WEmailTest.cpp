@@ -48,7 +48,7 @@ void WEmailTest::closeEvent(QCloseEvent* event)
 {
 
 	saveLastWrod();
-	
+
 }
 
 //保存上次输入的内容
@@ -68,8 +68,10 @@ void WEmailTest::saveLastWrod()
 		}
 
 		wstring test = ui.edit_putEmail->text().toStdWString();
+		wstring verify = ui.edit_verifyEmail->text().toStdWString();
 
 		child.value().put<wstring>(L"WEmailTest_LastGetEmail", test);
+		child.value().put<wstring>(L"WEmailTest_LastVerify", verify);
 
 		json::write_json(appFile + "conf.json", value);
 	}
@@ -95,8 +97,10 @@ void WEmailTest::readLastWrod()
 		read_json(appFile + "conf.json", value);
 
 		QString temp_lastGetEmail = QString::fromStdWString(value.get<wstring>(L"Win.WEmailTest_LastGetEmail", L""));
+		QString temp_lastVerify = QString::fromStdWString(value.get<wstring>(L"Win.WEmailTest_LastVerify", L""));
 
 		ui.edit_putEmail->setText(temp_lastGetEmail);
+		ui.edit_verifyEmail->setText(temp_lastVerify);
 	}
 	catch (exception & e)
 	{
@@ -174,7 +178,7 @@ bool WEmailTest::read_emailList()
 
 		//设置样式
 		ui.tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-	
+
 
 		boost::property_tree::wptree value;
 		json::read_json(appFile + "conf.json", value);
@@ -287,130 +291,130 @@ void WEmailTest::onTest()
 	ui.button_test->update();
 
 	//QFuture < void > future = QtConcurrent::run([&]() {
-		try
+	try
+	{
+		string name;
+		string title;
+		string word;
+		string putEmail;
+		//string file;
+
+		//读取其他配置
+		get_otherConf();
+
+		//接受消息的邮箱
+		putEmail = ui.edit_putEmail->text().toStdString();
+
+		//获取发送内容
+		if (!get_word(ui.combo_word->currentIndex() + 1, name, title, word))
 		{
-			string name;
-			string title;
-			string word;
-			string putEmail;
-			//string file;
+			QMessageBox::warning(NULL, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("获取发送内容失败"), QMessageBox::Ok);
+			ui.button_test->setText(QString::fromLocal8Bit("测试错误"));
+			ui.button_test->setEnabled(true);
+			return;
+		}
 
-			//读取其他配置
-			get_otherConf();
+		MsgValue(word);
+		MsgValue(title);
+		MsgValue(name);
 
-			//接受消息的邮箱
-			putEmail = ui.edit_putEmail->text().toStdString();
-
-			//获取发送内容
-			if (!get_word(ui.combo_word->currentIndex() + 1, name, title, word))
+		for (int i = 0; i < m_model->rowCount(); i++)
+		{
+			if (m_model->item(i)->checkState() == Qt::Checked)
 			{
-				QMessageBox::warning(NULL, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("获取发送内容失败"), QMessageBox::Ok);
-				ui.button_test->setText(QString::fromLocal8Bit("测试错误"));
-				ui.button_test->setEnabled(true);
-				return;
+				m_model->itemFromIndex(m_model->index(i, 2))->setText(QString::fromLocal8Bit("准备发送"));
 			}
+		}
 
-			MsgValue(word);
-			MsgValue(title);
-			MsgValue(name);
+		ui.tableView->resizeRowsToContents();//自适应多行文本
 
-			for (int i = 0; i < m_model->rowCount(); i++)
+		//开始遍历邮箱列表
+		for (int i = 0; i < m_model->rowCount(); i++)
+		{
+			QCoreApplication::processEvents();
+
+			if (m_model->item(i)->checkState() == Qt::Checked)
 			{
-				if (m_model->item(i)->checkState() == Qt::Checked)
-				{
-					m_model->itemFromIndex(m_model->index(i, 2))->setText(QString::fromLocal8Bit("准备发送"));
-				}
-			}
+				m_model->itemFromIndex(m_model->index(i, 2))->setText(QString::fromLocal8Bit("正在发送"));
+				ui.tableView->update(m_model->index(i, 2));
 
-			ui.tableView->resizeRowsToContents();//自适应多行文本
 
-			//开始遍历邮箱列表
-			for (int i = 0; i < m_model->rowCount(); i++)
-			{
+				string emailText = m_model->item(i, 1)->text().toLocal8Bit();
+				string passwd = m_model->item(i, 3)->text().toLocal8Bit();
+				string smtp = m_model->item(i, 4)->text().toLocal8Bit();
+				string port = m_model->item(i, 5)->text().toLocal8Bit();
+				bool ssl = !(m_model->item(i, 6)->text().isEmpty());
+
+				phpSendEmail email(
+					phpPath,
+					phpFile,
+					sendFile,
+					smtp,
+					ssl,
+					port,
+					emailText,
+					passwd,
+					putEmail,
+					name,
+					title,
+					word
+				);
+
+				/*设置格式*/
+
+				//设置html格式
+				email.setIsHtml(otherCfg.useHtml);
+
+
+				QCoreApplication::processEvents();
+				bool ret = email.send();
 				QCoreApplication::processEvents();
 
-				if (m_model->item(i)->checkState() == Qt::Checked)
+				if (ret)
 				{
-					m_model->itemFromIndex(m_model->index(i, 2))->setText(QString::fromLocal8Bit("正在发送"));
+					//string error = email.getInf();
+					//m_model->itemFromIndex(m_model->index(i, 2))->setText(QString::fromLocal8Bit("发送成功 返回信息:") + QString::fromLocal8Bit(error.c_str()));
+					m_model->itemFromIndex(m_model->index(i, 2))->setText(QString::fromLocal8Bit("发送成功"));
 					ui.tableView->update(m_model->index(i, 2));
-
-
-					string emailText = m_model->item(i, 1)->text().toLocal8Bit();
-					string passwd = m_model->item(i, 3)->text().toLocal8Bit();
-					string smtp = m_model->item(i, 4)->text().toLocal8Bit();
-					string port = m_model->item(i, 5)->text().toLocal8Bit();
-					bool ssl = !(m_model->item(i, 6)->text().isEmpty());
-
-					phpSendEmail email(
-						phpPath,
-						phpFile,
-						sendFile,
-						smtp,
-						ssl,
-						port,
-						emailText,
-						passwd,
-						putEmail,
-						name,
-						title,
-						word
-					);
-
-					/*设置格式*/
-
-					//设置html格式
-					email.setIsHtml(otherCfg.useHtml);
-
-				
-					QCoreApplication::processEvents();
-					bool ret = email.send();
-					QCoreApplication::processEvents();
-
-					if (ret)
-					{
-						//string error = email.getInf();
-						//m_model->itemFromIndex(m_model->index(i, 2))->setText(QString::fromLocal8Bit("发送成功 返回信息:") + QString::fromLocal8Bit(error.c_str()));
-						m_model->itemFromIndex(m_model->index(i, 2))->setText(QString::fromLocal8Bit("发送成功"));
-						ui.tableView->update(m_model->index(i, 2));
-					}
-					else
-					{
-						string error = email.getInf();
-
-						if (error.empty())
-						{
-							error = "未知原因";
-						}
-
-						//修改提示内容
-						m_model->itemFromIndex(m_model->index(i, 2))->setText(QString::fromLocal8Bit("发送失败 错误信息:") + QString::fromLocal8Bit(error.c_str()));
-						ui.tableView->update(m_model->index(i, 2));
-					}
-
 				}
-				ui.tableView->resizeRowsToContents();//自适应多行文本
+				else
+				{
+					string error = email.getInf();
+
+					if (error.empty())
+					{
+						error = "未知原因";
+					}
+
+					//修改提示内容
+					m_model->itemFromIndex(m_model->index(i, 2))->setText(QString::fromLocal8Bit("发送失败 错误信息:") + QString::fromLocal8Bit(error.c_str()));
+					ui.tableView->update(m_model->index(i, 2));
+				}
+
 			}
-			ui.button_test->setText(QString::fromLocal8Bit("测试完成"));
-			ui.button_test->setEnabled(true);
+			ui.tableView->resizeRowsToContents();//自适应多行文本
+		}
+		ui.button_test->setText(QString::fromLocal8Bit("测试完成"));
+		ui.button_test->setEnabled(true);
 
-		}
-		catch (exception & e)
-		{
-			QMessageBox::warning(NULL, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit(e.what()), QMessageBox::Ok);
-			//MessageBoxA(NULL, e.what(), "错误", MB_OK);
-			ui.button_test->setText(QString::fromLocal8Bit("测试错误"));
-			ui.button_test->setEnabled(true);
-			return;
-		}
-		catch (...)
-		{
-			QMessageBox::warning(NULL, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("读取json异常"), QMessageBox::Ok);
+	}
+	catch (exception & e)
+	{
+		QMessageBox::warning(NULL, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit(e.what()), QMessageBox::Ok);
+		//MessageBoxA(NULL, e.what(), "错误", MB_OK);
+		ui.button_test->setText(QString::fromLocal8Bit("测试错误"));
+		ui.button_test->setEnabled(true);
+		return;
+	}
+	catch (...)
+	{
+		QMessageBox::warning(NULL, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("读取json异常"), QMessageBox::Ok);
 
-			ui.button_test->setText(QString::fromLocal8Bit("测试错误"));
-			ui.button_test->setEnabled(true);
-			return;
-		}
-		//});
+		ui.button_test->setText(QString::fromLocal8Bit("测试错误"));
+		ui.button_test->setEnabled(true);
+		return;
+	}
+	//});
 }
 
 //获取内容
@@ -497,37 +501,48 @@ void WEmailTest::onTableClicked(const QModelIndex& m)
 //验证QQ是否开通邮箱
 void WEmailTest::onVerify()
 {
+	//获取其他设置
+	get_otherConf();
+
+	if (otherCfg.verifyEmail.empty())
+	{
+		QMessageBox::information(NULL, "未设置", "验证邮箱未设置，请在系统设置中设置验证邮箱");
+		return;
+	}
+
 	ui.button_verify->setText(QString::fromLocal8Bit("正在验证中..."));
 	ui.button_verify->setEnabled(false);
 
-	QFuture < void > future = QtConcurrent::run([&]() {
+	//QFuture < void > future = QtConcurrent::run([&]() {
 
-		phpSendEmail email(phpPath, phpFile, verifyFile, otherCfg.verifyEmail, otherCfg.verifyPasswd, ui.edit_verifyEmail->text().toStdString() + "@qq.com");
+	phpSendEmail email(phpPath, phpFile, verifyFile, otherCfg.verifyEmail, otherCfg.verifyPasswd, ui.edit_verifyEmail->text().toStdString() + "@qq.com");
 
-		int ret = email.verify();
-		if (ret)
-		{/*
-			QMessageBox* box = new QMessageBox(
-				QMessageBox::Information,
-				QString::fromLocal8Bit("已开通"),
-				QString::fromLocal8Bit(("对方已开通邮箱 返回信息:" + email.getInf()).c_str()),
-				QMessageBox::Ok);
-			box->show();*/
-			ui.button_verify->setText(QString::fromLocal8Bit("此邮箱已开通"));
-		}
-		else
-		{
-			/*	QMessageBox* box = new QMessageBox(
-					QMessageBox::Information,
-					QString::fromLocal8Bit("未开通"),
-					QString::fromLocal8Bit(("对方未开通邮箱 返回信息:" + email.getInf()).c_str()),
-					QMessageBox::Ok);
-				box->show();*/
-			ui.button_verify->setText(QString::fromLocal8Bit("此邮箱未开通"));
-		}
+	QCoreApplication::processEvents();
+	int ret = email.verify();
+	QCoreApplication::processEvents();
+	if (ret)
+	{
+		QMessageBox* box = new QMessageBox(
+			QMessageBox::Information,
+			QString::fromLocal8Bit("已开通"),
+			QString::fromLocal8Bit(("对方已开通邮箱 返回信息:" + email.getInf()).c_str()),
+			QMessageBox::Ok);
+		box->show();
+		ui.button_verify->setText(QString::fromLocal8Bit("此邮箱已开通"));
+	}
+	else
+	{
+		QMessageBox* box = new QMessageBox(
+			QMessageBox::Information,
+			QString::fromLocal8Bit("未开通"),
+			QString::fromLocal8Bit(("对方未开通邮箱 返回信息:" + email.getInf()).c_str()),
+			QMessageBox::Ok);
+		box->show();
+		ui.button_verify->setText(QString::fromLocal8Bit("此邮箱未开通"));
+	}
 
-		ui.button_verify->setEnabled(true);
-		});
+	ui.button_verify->setEnabled(true);
+	//		});
 
 
 }

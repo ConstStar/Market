@@ -1416,7 +1416,7 @@ void SendEmail::send()
 
 		//计数减一
 		countFinish(m_smtp.email, -1);
-		logger.sqlLog(m_GroupId, m_QQId, "发送失败", (string("未开通邮箱 ") + error + log.str()).c_str());
+		logger.sqlLog(m_GroupId, m_QQId, "发送失败", (string("未开通邮箱 ") + error).c_str());
 
 		return;
 	}
@@ -1486,32 +1486,48 @@ void SendEmail::MsgValue(std::string& str)
 	//群号码
 	replace_all_distinct(str, "{群号码}", to_string(m_GroupId));
 
+	
+	logger.testLog("测试");
 
-	auto QQInf = CQ::getGroupMemberInfo(m_GroupId, m_QQId, true);
+	auto memberList = CQ::getGroupMemberList(m_GroupId);
+	CQ::GroupMemberInfo QQGroupInf;
+	logger.testLog("测试1");
+	//for (auto temp : memberList)
+	//{
+	//	if (temp.QQID == m_QQId)
+	//	{
+	//		QQGroupInf = temp;
+	//		break;
+	//	}
+	//}
+
+	auto QQInf = CQ::getStrangerInfo(m_QQId, true);
 	auto GroupInf = CQ::getGroupList();
+	logger.testLog("测试2");
+
 	//触发的QQ名称
-	replace_all_distinct(str, "{QQ名称}", QQInf.昵称);
+	replace_all_distinct(str, "{QQ名称}", QQInf.nick);
 
 	//触发的QQ名片
-	replace_all_distinct(str, "{群名片}", QQInf.名片);
+	replace_all_distinct(str, "{群名片}", QQGroupInf.名片);
 
 	//触发的群名称
 	replace_all_distinct(str, "{群名称}", GroupInf[m_GroupId]);
 
 	//地区
-	replace_all_distinct(str, "{地区}", QQInf.地区);
+	replace_all_distinct(str, "{地区}", QQGroupInf.地区);
 
 	//性别
 	string sex;
-	if (QQInf.性别 == 0)
+	if (QQInf.sex == 0)
 		sex = "男";
-	else if (QQInf.性别 == 1)
+	else if (QQInf.sex == 1)
 		sex = "女";
 
 	replace_all_distinct(str, "{性别}", sex);
 
 	//年龄
-	replace_all_distinct(str, "{年龄}", to_string(QQInf.年龄));
+	replace_all_distinct(str, "{年龄}", to_string(QQInf.age));
 
 	//随机数变量
 	replace_all_random(str);
