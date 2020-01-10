@@ -29,9 +29,9 @@ WEmailTest::WEmailTest(QWidget* parent)
 	read_emailList();
 	read_wordList();
 
-	//设置只能输入数字
-	QValidator* validator = new QIntValidator(0, 999999999999, this);
-	ui.edit_verifyEmail->setValidator(validator);
+	////设置只能输入数字
+	//QValidator* validator = new QIntValidator(0, 999999999999, this);
+	//ui.edit_verifyEmail->setValidator(validator);
 
 	connect(ui.button_test, SIGNAL(clicked()), this, SLOT(onTest()));
 	connect(ui.button_verify, SIGNAL(clicked()), this, SLOT(onVerify()));

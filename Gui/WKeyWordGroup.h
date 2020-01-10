@@ -21,12 +21,8 @@ public:
 
 private:
 	Ui::WKeyWordGroup ui;
-	QStandardItemModel* m_model;
-	QMenu* m_contextMenu;
 
-	void contextMenuEvent(QContextMenuEvent* event);
 public slots:
-	void onAdd();
-	void onDelete();
+	void onSave();
 	void onCheck();
 };

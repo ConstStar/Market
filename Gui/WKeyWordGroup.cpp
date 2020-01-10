@@ -15,16 +15,10 @@ WKeyWordGroup::WKeyWordGroup(QWidget* parent)
 {
 	ui.setupUi(this);
 
-	//创建
-	m_model = new QStandardItemModel;
-
-	m_contextMenu = new QMenu;
-	m_contextMenu->addAction(QString::fromLocal8Bit("删除"), this, SLOT(onDelete()));
-
 
 	init();
 
-	connect(ui.button_add, SIGNAL(clicked()), this, SLOT(onAdd()));
+	connect(ui.button_save, SIGNAL(clicked()), this, SLOT(onSave()));
 	connect(ui.check_streng, SIGNAL(clicked()), this, SLOT(onCheck()));
 }
 
@@ -37,7 +31,7 @@ void WKeyWordGroup::init()
 	try
 	{
 		//清空原数据
-		ui.list_keyWord->clear();
+		ui.text_keyWord->clear();
 
 		boost::property_tree::wptree value;
 		json::read_json(appFile + "conf.json", value);
@@ -55,12 +49,16 @@ void WKeyWordGroup::init()
 
 		boost::property_tree::wptree child = value.get_child(L"KeyWord");
 
+
+		QString	temp_keyWord;
 		for (auto temp : child)
 		{
 			QString temp_str(QString::fromStdWString(temp.second.data().c_str()));
 
-			addList(temp_str);
+			temp_keyWord += temp_str + "\n";
 		}
+
+		ui.text_keyWord->setPlainText(temp_keyWord);
 
 		//读取复选框
 		child_test = value.get_child_optional(L"Main");
@@ -112,13 +110,22 @@ void WKeyWordGroup::write()
 			child.value().clear();
 		}
 
-		boost::property_tree::wptree temp;
-		for (int i = 0; i < ui.list_keyWord->count(); i++)
-		{
-			line = ui.list_keyWord->item(i)->text();
 
-			temp.put<wstring>(L"", line.toStdWString());
+		QString nameStr = ui.text_keyWord->toPlainText();
+		nameStr.replace(" ", "");
+		nameStr.replace("\t", "");
+		nameStr.replace("\"", "");
+		QStringList nameList = nameStr.split("\n");
+
+		boost::property_tree::wptree temp;
+		for (auto name : nameList)
+		{
+			if (name.isEmpty())
+				continue;
+
+			temp.put<wstring>(L"", name.toStdWString());
 			child.value().push_back(make_pair(L"", temp));
+
 		}
 
 		//保存复选框设置
@@ -148,49 +155,12 @@ void WKeyWordGroup::write()
 	}
 }
 
-//添加
-void WKeyWordGroup::addList(QString str)
+void WKeyWordGroup::onSave()
 {
-	QListWidgetItem* item = new QListWidgetItem;
-	item->setText(str);                     //设置列表项的文本
-	ui.list_keyWord->addItem(item);
-}
-
-void WKeyWordGroup::contextMenuEvent(QContextMenuEvent* event)
-{
-	m_contextMenu->exec(QCursor::pos()); // 菜单出现的位置为当前鼠标的位置
-}
-
-void WKeyWordGroup::onAdd()
-{
-	if (ui.edit_keyWord->text().isEmpty())
-	{
-		QMessageBox::warning(NULL, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("关键词不能为空"), QMessageBox::Ok);
-		return;
-	}
-
-	QString str = ui.edit_keyWord->text();
-	addList(str);
-
-	ui.edit_keyWord->clear();
 	write();
+	QMessageBox::information(NULL, QString::fromLocal8Bit("完成"), QString::fromLocal8Bit("保存成功"), QMessageBox::Ok);
 }
 
-//点击删除菜单
-void WKeyWordGroup::onDelete()
-{
-	int row = ui.list_keyWord->currentIndex().row();
-	if (row >= 0)
-	{
-		QListWidgetItem* item = ui.list_keyWord->takeItem(row);
-		ui.list_keyWord->removeItemWidget(item);
-
-		delete item;
-	}
-
-	write();
-	//ui.list_keyWord->itemDelegateForRow(ui.list_keyWord->currentIndex().row());//更据当前鼠标所在的索引的行位置,删除一行
-}
 
 //点击复选框事件
 void WKeyWordGroup::onCheck()

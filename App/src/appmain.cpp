@@ -37,7 +37,7 @@ try
 
 		}
 	);
-	
+
 	//检查是否为第一次启动
 	if (FreeResFile::oneStart() == false)
 		return 0;
@@ -237,10 +237,9 @@ try
 		return 0;
 	}
 
-	//logger.testLog("群消息");
 	KeyWordMsg a(fromGroup, fromQQ, msg);
 	a.KeyWordFun();
-	//logger.testLog("End 群消息");
+
 	return 0;
 }
 catch (exception & e)

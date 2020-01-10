@@ -202,12 +202,32 @@ public:
 
 	}
 
+	// 字符串替换
+	void replace_all_distinct(string& str, string old_value, string new_value)
+	{
+		for (string::size_type pos(0); pos != string::npos; pos += new_value.length())
+		{
+			if ((pos = str.find(old_value, pos)) != string::npos)
+			{
+				str.replace(pos, old_value.length(), new_value);
+			}
+			else { break; }
+		}
+		//return str;
+	}
+
+
 	//数据库日志
 	void sqlLog(long long GroupId, long long QQId, const char* type, const char* word)
 	{
 
 		//删除无用的日志
 		delSqlLog();
+
+
+		string temp_word(word);
+		replace_all_distinct(temp_word, "'", "''");
+
 
 		//构造sql语句
 		stringstream ss;
@@ -219,12 +239,29 @@ public:
 		ss << type;
 		ss << "','";
 		ss << word;
+
+		if (temp_word.size() > 150)
+		{
+			temp_word[150] = 0;
+			temp_word += "...(大于150字)";
+			//OutputDebugStringA(("#1#" + temp_word).c_str());
+		}
+
 		ss << "');";
 
-		int ret = sqlite3_exec(m_logdb, StrChange::ConvertAnsiToUtf8(ss.str().c_str()), NULL, NULL, &m_error);
+		int ret;
+		for (int i = 0; i < 5; i++)
+		{
+			ret = sqlite3_exec(m_logdb, StrChange::ConvertAnsiToUtf8(ss.str().c_str()), NULL, NULL, &m_error);
+			if (ret == SQLITE_OK)
+				break;
+			Sleep(200);
+		}
 		if (ret != SQLITE_OK)
 		{
-			Info("SQLite操作异常");
+			//Info("SQLite操作异常");
+			//Warning(("SQLite操作异常 内容:" + ss.str()).c_str());
+			//OutputDebugStringA(("#2#" + temp_word).c_str());
 		}
 	}
 
@@ -237,43 +274,43 @@ public:
 	}
 
 
-	////测试
-	//void testLog(string str)
-	//{
-	//	// 基于当前系统的当前日期/时间
-	//	time_t now = time(0);
+	//测试
+	void testLog(string str)
+	{
+		// 基于当前系统的当前日期/时间
+		time_t now = time(0);
 
-	//	// 把 now 转换为字符串形式
-	//	char* dt = ctime(&now);
+		// 把 now 转换为字符串形式
+		char* dt = ctime(&now);
 
-	//	ofstream file;
-	//	size_t srcSize = 0;
+		ofstream file;
+		size_t srcSize = 0;
 
-	//	ifstream fsRead("test.log", ios::in | ios::binary);
-	//	if (fsRead.good())
-	//	{
-	//		fsRead.seekg(0, fsRead.end);
-	//		srcSize = fsRead.tellg();
-	//		fsRead.close();
-	//	}
+		ifstream fsRead("test.log", ios::in | ios::binary);
+		if (fsRead.good())
+		{
+			fsRead.seekg(0, fsRead.end);
+			srcSize = fsRead.tellg();
+			fsRead.close();
+		}
 
-	//	if (srcSize > 20480)
-	//	{
-	//		file.open("test.log", ios::out);
-	//	}
-	//	else
-	//	{
-	//		file.open("test.log", ios::app);
-	//	}
+		if (srcSize > 20480)
+		{
+			file.open("test.log", ios::out);
+		}
+		else
+		{
+			file.open("test.log", ios::app);
+		}
 
 
-	//	if (file.good())
-	//	{
-	//		file << dt;
-	//		file << str << endl << endl;
-	//		file.close();
-	//	}
-	//}
+		if (file.good())
+		{
+			file << dt;
+			file << str << endl << endl;
+			file.close();
+		}
+	}
 
 	//重写info
 	void Info(string msg)
@@ -405,7 +442,8 @@ public:
 
 	//构造
 	SendEmail(long long GroupId, long long QQId, string type) :m_GroupId(GroupId), m_QQId(QQId), m_type(type)
-	{}
+	{
+	}
 
 	//发送邮件
 	void send();
@@ -1358,9 +1396,11 @@ void SendEmail::send()
 	}
 
 
-	auto QQInf = CQ::getStrangerInfo(m_QQId, true);
+	auto QQInf = CQ::getStrangerInfo(m_QQId);
 	auto GroupInf = CQ::getGroupList();
 
+
+	logger.testLog("准备发送");
 	//准备发送
 	logger.sqlLog(m_GroupId, m_QQId, m_type.c_str(), (string("QQ名称:") + QQInf.nick + " 群名称:" + GroupInf[m_GroupId] + " 将会发送一封邮件").c_str());
 
@@ -1375,7 +1415,7 @@ void SendEmail::send()
 		return;
 	}
 
-
+	logger.testLog("计数加一");
 	//计数加一
 	countFinish(m_smtp.email, 1);
 
@@ -1388,11 +1428,12 @@ void SendEmail::send()
 	string temp_title(m_word.title);
 	string temp_name(m_word.name);
 
+	logger.testLog("变量替换");
 	MsgValue(temp_word);
 	MsgValue(temp_title);
 	MsgValue(temp_name);
 
-
+	logger.testLog("构造发送");
 	phpSendEmail email
 	(
 		phpPath,
@@ -1413,6 +1454,7 @@ void SendEmail::send()
 		temp_word
 	);
 
+	logger.testLog("开始验证");
 	if (email.verify() == false)
 	{
 		string error = email.getInf();
@@ -1434,6 +1476,7 @@ void SendEmail::send()
 		return;
 	}
 
+	logger.testLog("开始发送");
 	//发送邮件
 	if (email.send() == false)
 	{
@@ -1461,6 +1504,11 @@ void SendEmail::send()
 		return;
 	}
 
+	//记录邮箱延时时间
+	long long smtpSleep = time(NULL);
+	g_emailLimit[m_smtp.email].sleep = smtpSleep;
+
+	logger.testLog("发送成功");
 	logger.sqlLog(m_GroupId, m_QQId, "发送成功", (log.str() + " 返回信息:" + email.getInf()).c_str());
 
 }
@@ -1500,7 +1548,17 @@ void SendEmail::MsgValue(std::string& str)
 	auto memberList = CQ::getGroupMemberList(m_GroupId);
 	CQ::GroupMemberInfo QQGroupInf;
 
-	auto QQInf = CQ::getStrangerInfo(m_QQId, true);
+	for (auto temp : memberList)
+	{
+		if (temp.QQID == m_QQId)
+		{
+			QQGroupInf = temp;
+			break;
+		}
+
+	}
+
+	auto QQInf = CQ::getStrangerInfo(m_QQId);
 	auto GroupInf = CQ::getGroupList();
 
 	//触发的QQ名称
@@ -1658,8 +1716,6 @@ bool SendEmail::getSendData()
 		logger.sqlLog(m_GroupId, m_QQId, "发送失败", "邮箱账号已达到发送隔间限制");
 		return false;
 	}
-
-	g_emailLimit[m_smtp.email].sleep = smtpSleep;
 
 	//获取发送邮箱内容
 	m_word = getWord();
