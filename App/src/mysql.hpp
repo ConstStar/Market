@@ -21,7 +21,6 @@ public:
 
 			if (hDLL == NULL) {
 				MessageBoxA(NULL, "重要dll获取失败", "错误", NULL);
-				logger.Info("界面打开失败");
 				return false;
 			}
 			else

@@ -330,7 +330,7 @@ private:
 	{
 		try
 		{
-			int ret = 0;// = m_db.exec(ConvertAnsiToUtf8(sql));
+			int ret = m_db.exec(ConvertAnsiToUtf8(sql));
 
 			if (!ret)
 			{
@@ -371,7 +371,7 @@ private:
 	//获取sql错误信息
 	string getSqlError()
 	{
-		string buf;// = m_db.getErrorMsg();
+		string buf = m_db.getErrorMsg();
 		return UTF8ToANSI(buf);
 	}
 
