@@ -52,7 +52,7 @@ try
 }
 catch (exception & e)
 {
-	logger.Info(string("“应用已被启用” 出现崩溃已被阻止 原因:") + e.what());
+	logger.Info(string("“应用已被启用” 出现崩溃已被阻止 原因:") + e.what());								  //
 }
 catch (...)
 {
@@ -236,6 +236,11 @@ try
 		logger.Info("请先激活软件");
 		return 0;
 	}
+
+	//忽略匿名消息
+	if (fromQQ == 80000000)
+		return 0;
+
 
 	KeyWordMsg a(fromGroup, fromQQ, msg);
 	a.KeyWordFun();

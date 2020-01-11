@@ -5,7 +5,7 @@
   "ret": 1, // 返回码，固定为1
   "apiver": 9, // Api版本，本SDK为9
   "name": "懒人引流", // 应用名称
-  "version": "1.0.1", // 应用版本
+  "version": "1.0.2", // 应用版本
   "version_id": 1, // 应用顺序版本（每次发布时至少+1）
   "author": "懒人引流", // 应用作者
   "description": "懒人精准智能引流\r\n温馨提醒：用懒人引流，不会影响您开法拉利", //一句话描述插件用途
@@ -101,13 +101,13 @@
     //125, //置群匿名设置		setGroupAnonymous
     //126, //置群成员名片		setGroupCard
     //127, //[敏感]置群退出		setGroupLeave
-    128, //置群成员专属头衔	setGroupSpecialTitle
-    130, //取群成员信息		getGroupMemberInfoV2 / getGroupMemberInfo
+    //128, //置群成员专属头衔	setGroupSpecialTitle
+    //130, //取群成员信息		getGroupMemberInfoV2 / getGroupMemberInfo
     131, //取陌生人信息		getStrangerInfo
     // 140, //置讨论组退出		setDiscussLeave
     150, //置好友添加请求		setFriendAddRequest
     151, //置群添加请求		setGroupAddRequest
-    160, //取群成员列表		getGroupMemberList
+    //160, //取群成员列表		getGroupMemberList
     161 //取群列表			getGroupList
     //180 //撤回消息			deleteMsg
   ]

@@ -52,13 +52,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SolutionDir)include;$(SolutionDir)include\CQ;$(IncludePath);E:\bin\boost_1_71_0</IncludePath>
-    <LibraryPath>$(SolutionDir)lib\CQ;$(LibraryPath);E:\bin\boost_1_71_0\stage\lib</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib\CQ;$(SolutionDir)lib\SQLiteCpp;$(LibraryPath);E:\bin\boost_1_71_0\stage\lib</LibraryPath>
     <OutDir>$(SolutionDir)builds</OutDir>
     <TargetName>app</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(SolutionDir)include;$(SolutionDir)include\CQ;$(IncludePath);E:\bin\boost_1_71_0</IncludePath>
-    <LibraryPath>$(SolutionDir)lib\CQ;$(LibraryPath);E:\bin\boost_1_71_0\stage\lib</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib\CQ;$(SolutionDir)lib\SQLiteCpp;$(LibraryPath);E:\bin\boost_1_71_0\stage\lib</LibraryPath>
     <OutDir>$(SolutionDir)builds</OutDir>
     <TargetName>app</TargetName>
   </PropertyGroup>
@@ -74,7 +74,7 @@ copy /Y "$(SolutionDir)App\cn.xiaoxiaoge.Market.json" "D:\用户文档\桌面\�
     <Link>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SQLiteCpp_MDd.lib;sqlite3_MDd.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -95,7 +95,7 @@ copy /Y "$(SolutionDir)App\cn.xiaoxiaoge.Market.json" "D:\用户文档\桌面\�
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SQLiteCpp.lib;sqlite3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(TargetPath)" "D:\用户文档\桌面\桌面整理\酷Q\dev\cn.xiaoxiaoge.Market\app.dll"
@@ -107,7 +107,6 @@ copy /Y "$(SolutionDir)App\cn.xiaoxiaoge.Market.json" "D:\用户文档\桌面\�
     <ClCompile Include="src\ComputerId.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MD5.cpp" />
-    <ClCompile Include="src\sqlite3.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -118,7 +117,6 @@ copy /Y "$(SolutionDir)App\cn.xiaoxiaoge.Market.json" "D:\用户文档\桌面\�
     <ClInclude Include="src\json.hpp" />
     <ClInclude Include="src\MD5.h" />
     <ClInclude Include="src\mysql.hpp" />
-    <ClInclude Include="src\sqlite3.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\File\bin\libcrypto-1_1.dll" />

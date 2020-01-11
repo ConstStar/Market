@@ -606,14 +606,14 @@ void WEmailTest::MsgValue(string& str)
 	replace_all_distinct(str, "{QQ名称}", "昵称");
 
 	//触发的QQ名片
-	replace_all_distinct(str, "{群名片}", "名片");
+	//replace_all_distinct(str, "{群名片}", "名片");
 
 	//触发的群名称
 	replace_all_distinct(str, "{群名称}", "群名称");
 
 
 	//地区
-	replace_all_distinct(str, "{地区}", "北京");
+	//replace_all_distinct(str, "{地区}", "北京");
 
 
 	replace_all_distinct(str, "{性别}", "男");

@@ -21,9 +21,6 @@
     <ClCompile Include="src\main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\sqlite3.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="src\MD5.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -36,9 +33,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\json.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\sqlite3.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\mysql.hpp">

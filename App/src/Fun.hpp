@@ -2,15 +2,18 @@
 #include <string>
 #include <map>
 
+#include <codecvt>
+
+#include <sqlite3/sqlite3.h>
+#include <SQLiteCpp/SQLiteCpp.h>
+#include <CQlogger.h>
+
 #include "json.hpp"
-
-#include "sqlite3.h"
-
-#include <CQLogger.h>
-
 #include "appInf.h"
 
 using namespace std;
+
+#define SQLITE_PATHNAME "log.db"
 
 //邮箱
 struct CONF_EMAIL
@@ -183,37 +186,35 @@ public:
 };
 
 //日志类
-class MyLogger : public CQ::Logger
+class Mylogger : public CQ::Logger
 {
 public:
 
-	MyLogger(const char* name) :Logger(name)
+	Mylogger(const char* name) :Logger(name), m_db(SQLITE_PATHNAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE)
 	{
 		m_name = name;
 
 
-		sqlite3_open("log.db", &m_logdb);
+		/*sqlite3* logdb;
+		sqlite3_open("log.db", &logdb);
 
 		char* error = NULL;
-		sqlite3_exec(m_logdb, "CREATE TABLE log (Time DATETIME,QQId INT (15),GroupId INT (15),Type CHAR (20),Word TEXT);", NULL, NULL, &error);
 
-		//删除原来的数据
-		sqlite3_exec(m_logdb, "DELETE FROM log;", NULL, NULL, &error);
+		sqlite3_exec(logdb, "CREATE TABLE log (Time DATETIME,QQId INT (15),GroupId INT (15),Type CHAR (20),Word TEXT);", NULL, NULL, &error);
 
-	}
-
-	// 字符串替换
-	void replace_all_distinct(string& str, string old_value, string new_value)
-	{
-		for (string::size_type pos(0); pos != string::npos; pos += new_value.length())
+		if (error != NULL)
 		{
-			if ((pos = str.find(old_value, pos)) != string::npos)
-			{
-				str.replace(pos, old_value.length(), new_value);
-			}
-			else { break; }
+			m_error = "日志初始化失败: ";
+			m_error += error;
+			Warning((m_error).c_str());
 		}
-		//return str;
+
+
+		sqlite3_exec(logdb, "DELETE FROM log;", NULL, NULL, &error);
+		sqlite3_close(logdb);*/
+
+		sqlExec("CREATE TABLE log (Time DATETIME,QQId INT (15),GroupId INT (15),Type CHAR (20),Word TEXT);");
+		sqlExec("DELETE FROM log;");
 	}
 
 
@@ -222,7 +223,7 @@ public:
 	{
 
 		//删除无用的日志
-		delSqlLog();
+		delDaySqlLog();
 
 
 		string temp_word(word);
@@ -239,7 +240,6 @@ public:
 		ss << type;
 		ss << "','";
 		ss << word;
-
 		if (temp_word.size() > 150)
 		{
 			temp_word[150] = 0;
@@ -249,20 +249,8 @@ public:
 
 		ss << "');";
 
-		int ret;
-		for (int i = 0; i < 5; i++)
-		{
-			ret = sqlite3_exec(m_logdb, StrChange::ConvertAnsiToUtf8(ss.str().c_str()), NULL, NULL, &m_error);
-			if (ret == SQLITE_OK)
-				break;
-			Sleep(200);
-		}
-		if (ret != SQLITE_OK)
-		{
-			//Info("SQLite操作异常");
-			//Warning(("SQLite操作异常 内容:" + ss.str()).c_str());
-			//OutputDebugStringA(("#2#" + temp_word).c_str());
-		}
+		sqlExec(ss.str().c_str());
+
 	}
 
 	//错误信息处理
@@ -270,6 +258,7 @@ public:
 	{
 		string buf = type + " 原因:" + error;
 		Info(buf.c_str());
+		Warning(buf.c_str());
 		sqlLog(0, 0, "系统", buf.c_str());
 	}
 
@@ -294,7 +283,7 @@ public:
 			fsRead.close();
 		}
 
-		if (srcSize > 20480)
+		if (srcSize > 40480)
 		{
 			file.open("test.log", ios::out);
 		}
@@ -319,14 +308,15 @@ public:
 		Logger::Info(msg);
 	}
 
-	void delSqlLog()
+	void delDaySqlLog()
 	{
-		sqlite3_exec(m_logdb, "DELETE FROM log WHERE time < datetime('now','start of day','0 day');", NULL, NULL, &m_error);
+		//sqlite3_exec(m_logdb, "DELETE FROM log WHERE time < datetime('now','start of day','0 day');", NULL, NULL, &m_error);
+		//m_db.exec("DELETE FROM log WHERE time < datetime('now','start of day','0 day');");
 	}
 
-	string getSqlLogError()
+	string getError()
 	{
-		if (m_error == NULL)
+		if (m_error.empty())
 		{
 			return "NULL";
 		}
@@ -334,15 +324,146 @@ public:
 		return m_error;
 	}
 
-	~MyLogger()
+private:
+	//执行sql语句
+	void sqlExec(const char* sql)
 	{
-		sqlite3_close(m_logdb);
+		try
+		{
+			int ret = 0;// = m_db.exec(ConvertAnsiToUtf8(sql));
+
+			if (!ret)
+			{
+				m_error = "SQL语句: ";
+				m_error += sql;
+				m_error += "\n错误信息: ";
+				m_error += getSqlError();
+
+				//Info("SQLite操作异常");
+				testLog(("SQLite操作错误 内容:\n" + m_error).c_str());
+				//OutputDebugStringA(("#2#" + temp_word).c_str());
+			}
+		}
+		catch (SQLite::Exception & e)
+		{
+			m_error = "SQL语句: ";
+			m_error += sql;
+			m_error += "\n异常信息: ";
+			m_error += UTF8ToANSI(e.what());
+			m_error += "\n错误信息: ";
+			m_error += getSqlError();
+
+			testLog(("SQLite操作异常 内容:\n" + m_error).c_str());
+		}
+		catch (...)
+		{
+			m_error = "SQL语句: ";
+			m_error += sql;
+			m_error += "\n异常信息: ";
+			m_error += "未知";
+			m_error += "\n错误信息: ";
+			m_error += getSqlError();
+
+			testLog(("SQLite操作异常 内容:\n" + m_error).c_str());
+		}
 	}
+
+	//获取sql错误信息
+	string getSqlError()
+	{
+		string buf;// = m_db.getErrorMsg();
+		return UTF8ToANSI(buf);
+	}
+
+
+
+	std::wstring UTF8ToUnicode(const std::string& str)
+	{
+		std::wstring ret;
+		try {
+			std::wstring_convert< std::codecvt_utf8<wchar_t> > wcv;
+			ret = wcv.from_bytes(str);
+		}
+		catch (const std::exception & e) {
+			//std::cerr << e.what() << std::endl;
+		}
+		return ret;
+	}
+
+	std::string UnicodeToANSI(const std::wstring& wstr)
+	{
+		string result;
+		//获取缓冲区大小，并申请空间，缓冲区大小事按字节计算的  
+		int len = WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
+		char* buffer = new char[len + 1];
+		//宽字节编码转换成多字节编码  
+		WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), buffer, len, NULL, NULL);
+		buffer[len] = '\0';
+		//删除缓冲区并返回值  
+		result.append(buffer);
+		delete[] buffer;
+		return result;
+	}
+
+	std::string UTF8ToANSI(const std::string str)
+	{
+		return UnicodeToANSI(UTF8ToUnicode(str));
+	}
+
+
+	char* ConvertAnsiToUtf8(const char* str)
+	{
+		char* unicode = Ansi2Unicode(str);
+		char* utf8 = Unicode2Utf8(unicode);
+		free(unicode);
+		return utf8;
+	}
+
+	char* Ansi2Unicode(const char* str)
+	{
+		int dwUnicodeLen = MultiByteToWideChar(CP_ACP, 0, str, -1, NULL, 0);
+		if (!dwUnicodeLen)
+		{
+			return _strdup(str);
+		}
+		size_t num = dwUnicodeLen * sizeof(wchar_t);
+		wchar_t* pwText = (wchar_t*)malloc(num);
+		memset(pwText, 0, num);
+		MultiByteToWideChar(CP_ACP, 0, str, -1, pwText, dwUnicodeLen);
+		return (char*)pwText;
+	}
+
+	char* Unicode2Utf8(const char* unicode)
+	{
+		int len;
+		len = WideCharToMultiByte(CP_UTF8, 0, (const wchar_t*)unicode, -1, NULL, 0, NULL, NULL);
+		char* szUtf8 = (char*)malloc(len + 1);
+		memset(szUtf8, 0, len + 1);
+		WideCharToMultiByte(CP_UTF8, 0, (const wchar_t*)unicode, -1, szUtf8, len, NULL, NULL);
+		return szUtf8;
+	}
+
+
+	// 字符串替换
+	void replace_all_distinct(string& str, string old_value, string new_value)
+	{
+		for (string::size_type pos(0); pos != string::npos; pos += new_value.length())
+		{
+			if ((pos = str.find(old_value, pos)) != string::npos)
+			{
+				str.replace(pos, old_value.length(), new_value);
+			}
+			else { break; }
+		}
+		//return str;
+	}
+
+
 
 private:
 	string m_name;
-	sqlite3* m_logdb;
-	char* m_error;
+	SQLite::Database m_db;
+	string m_error;
 };
 
 
@@ -564,7 +685,7 @@ string sendFile(".\\PHPRun\\Send.php");
 string verifyFile(".\\PHPRun\\Verify.php");
 
 //日志
-MyLogger logger("广传引流");
+Mylogger logger("广传引流");
 
 int g_updataConf = 0;
 
@@ -1377,6 +1498,7 @@ CONF_WORD getWord()
 
 //发送邮件
 void SendEmail::send()
+try
 {
 	if (g_otherSet.groupListType)
 	{
@@ -1512,10 +1634,21 @@ void SendEmail::send()
 	logger.sqlLog(m_GroupId, m_QQId, "发送成功", (log.str() + " 返回信息:" + email.getInf()).c_str());
 
 }
+catch (exception & e)
+{
+	logger.Info(string("“发送邮件” 出现崩溃已被阻止 原因:") + e.what());
+	logger.testLog(string("发送邮件异常 原因: ") + e.what());
+}
+catch (...)
+{
+	logger.Info("“发送邮件” 出现崩溃已被阻止 原因:未知");
+	logger.testLog("发送邮件异常 原因未知");
+}
 
 
 //消息变量
 void SendEmail::MsgValue(std::string& str)
+try
 {
 	//获取当前时间
 	SYSTEMTIME sys;
@@ -1545,18 +1678,20 @@ void SendEmail::MsgValue(std::string& str)
 	replace_all_distinct(str, "{群号码}", to_string(m_GroupId));
 
 
-	auto memberList = CQ::getGroupMemberList(m_GroupId);
-	CQ::GroupMemberInfo QQGroupInf;
+	/*
+		auto memberList = CQ::getGroupMemberList(m_GroupId);
+		CQ::GroupMemberInfo QQGroupInf;
 
-	for (auto temp : memberList)
-	{
-		if (temp.QQID == m_QQId)
+		for (auto temp : memberList)
 		{
-			QQGroupInf = temp;
-			break;
-		}
+			if (temp.QQID == m_QQId)
+			{
+				QQGroupInf = temp;
+				break;
+			}
 
-	}
+		}
+	*/
 
 	auto QQInf = CQ::getStrangerInfo(m_QQId);
 	auto GroupInf = CQ::getGroupList();
@@ -1565,13 +1700,15 @@ void SendEmail::MsgValue(std::string& str)
 	replace_all_distinct(str, "{QQ名称}", QQInf.nick);
 
 	//触发的QQ名片
-	replace_all_distinct(str, "{群名片}", QQGroupInf.名片);
+//	replace_all_distinct(str, "{群名片}", QQGroupInf.名片);
+	replace_all_distinct(str, "{群名片}", "");
 
 	//触发的群名称
 	replace_all_distinct(str, "{群名称}", GroupInf[m_GroupId]);
 
 	//地区
-	replace_all_distinct(str, "{地区}", QQGroupInf.地区);
+//	replace_all_distinct(str, "{地区}", QQGroupInf.地区);
+	replace_all_distinct(str, "{地区}", "");
 
 	//性别
 	string sex;
@@ -1589,6 +1726,16 @@ void SendEmail::MsgValue(std::string& str)
 	replace_all_random(str);
 
 
+}
+catch (exception & e)
+{
+	logger.Info(string("“构造变量” 出现崩溃已被阻止 原因:") + e.what());
+	logger.testLog(string("构造变量异常 原因: ") + e.what());
+}
+catch (...)
+{
+	logger.Info("“构造变量” 出现崩溃已被阻止 原因:未知");
+	logger.testLog("构造变量异常 原因未知");
 }
 
 //字符串替换
