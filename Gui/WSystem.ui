@@ -6,120 +6,168 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>549</width>
-    <height>392</height>
+    <width>722</width>
+    <height>384</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>系统设置</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_11">
+  <layout class="QVBoxLayout" name="verticalLayout_12">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_10">
+    <layout class="QHBoxLayout" name="horizontalLayout_14">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_7">
-       <item>
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>验证</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_12">
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>普通验证邮箱可用性</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_11">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_4">
-              <item>
-               <widget class="QLabel" name="label_5">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>QQ邮箱账号:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_6">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>邮箱授权码:</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
+             <widget class="QLabel" name="label_5">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>QQ邮箱账号:</string>
+              </property>
+             </widget>
             </item>
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_3">
-              <item>
-               <widget class="QLineEdit" name="edit_verifyEmail">
-                <property name="minimumSize">
-                 <size>
-                  <width>170</width>
-                  <height>0</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="edit_verifyPasswd"/>
-              </item>
-             </layout>
+             <widget class="QLabel" name="label_6">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>邮箱授权码:</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QLineEdit" name="edit_verifyEmail">
+              <property name="minimumSize">
+               <size>
+                <width>170</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="edit_verifyPasswd"/>
             </item>
            </layout>
           </item>
          </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="title">
-          <string>风控设置一</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_12">
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox_5">
+       <property name="title">
+        <string>第三方验证邮箱可用性</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_8">
+        <item>
+         <widget class="QCheckBox" name="check_keyVerify">
+          <property name="text">
+           <string>使用第三方验证方式</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_11">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_9">
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>key:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="edit_keyVerify"/>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_13">
+          <item>
+           <widget class="QPushButton" name="button_getKey">
+            <property name="text">
+             <string>获取key</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="button_getCredits">
+            <property name="text">
+             <string>查询剩余</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item>
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="title">
+        <string>风控设置一</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_12">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_9">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
-              <item>
-               <widget class="QLabel" name="label_7">
-                <property name="text">
-                 <string>每邮箱发送隔间(秒):</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="edit_smtpSleep"/>
-              </item>
-             </layout>
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>每邮箱发送隔间(秒):</string>
+              </property>
+             </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_6">
-              <item>
-               <widget class="QLabel" name="label_11">
-                <property name="text">
-                 <string>群消息字数限制:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="edit_keyWordMsgSize"/>
-              </item>
-             </layout>
+             <widget class="QLineEdit" name="edit_smtpSleep"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>群消息字数限制:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="edit_keyWordMsgSize"/>
             </item>
            </layout>
           </item>
          </layout>
-        </widget>
-       </item>
-      </layout>
+        </item>
+       </layout>
+      </widget>
      </item>
      <item>
       <widget class="QGroupBox" name="groupBox_3">
@@ -270,7 +318,7 @@
       <widget class="QGroupBox" name="groupBox_4">
        <property name="minimumSize">
         <size>
-         <width>300</width>
+         <width>400</width>
          <height>0</height>
         </size>
        </property>

@@ -31,7 +31,7 @@ MarketUpdate::MarketUpdate(QWidget* parent)
 
 	//初始化
 	ui.button_update->setEnabled(false);
-	ui.label_name->setText(QString::fromLocal8Bit("软件名称\t广传引流"));
+	ui.label_name->setText(QString::fromLocal8Bit("软件名称\t懒人引流"));
 	ui.label_localVersion->setText(QString::fromLocal8Bit(("当前版本\t" + version).c_str()));
 	ui.text_updateLog->setReadOnly(true);
 
@@ -63,7 +63,7 @@ void MarketUpdate::runApp()
 	}
 	else if (ret == 1)
 	{
-		QMessageBox* a = new QMessageBox(QMessageBox::Information, QString::fromLocal8Bit("更新"), QString::fromLocal8Bit("广传引流 有新版本，请在软件设置中更新"));
+		QMessageBox* a = new QMessageBox(QMessageBox::Information, QString::fromLocal8Bit("更新"), QString::fromLocal8Bit("懒人引流 有新版本，请在软件设置中更新"));
 		a->setModal(true);
 		a->show();
 	}
@@ -75,7 +75,7 @@ void MarketUpdate::runApp()
 	}
 	else
 	{
-		QMessageBox* a = new QMessageBox(QMessageBox::Information, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("广传引流 检查更新时出现异常"));
+		QMessageBox* a = new QMessageBox(QMessageBox::Information, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("懒人引流 检查更新时出现异常"));
 		a->setModal(true);
 		a->show();
 	}

@@ -14,7 +14,7 @@ extern string exceedDateTime;
 extern string appFile;
 
 
-WSystem::WSystem(QWidget *parent)
+WSystem::WSystem(QWidget* parent)
 	: QWidget(parent)
 {
 	ui.setupUi(this);
@@ -23,6 +23,10 @@ WSystem::WSystem(QWidget *parent)
 	readConf();
 
 	connect(ui.button_save, SIGNAL(clicked()), this, SLOT(onSave()));
+
+
+	connect(ui.button_getKey, SIGNAL(clicked()), this, SLOT(onGetKey()));
+	connect(ui.button_getCredits, SIGNAL(clicked()), this, SLOT(onGetCredits()));
 }
 
 WSystem::~WSystem()
@@ -52,6 +56,8 @@ bool WSystem::readConf()
 
 		QString temp_verifyEmail = QString::fromStdWString(value.get<wstring>(L"Main.VerifyEmail", L""));
 		QString temp_verifyPasswd = QString::fromStdWString(value.get<wstring>(L"Main.VerifyPasswd", L""));
+		QString temp_verifyKey = QString::fromStdWString(value.get<wstring>(L"Main.VerifyKey", L""));
+		bool temp_isVerifyKey = value.get<bool>(L"Main.IsVerifyKey", false);
 
 		QString temp_smtpSleep = QString::fromLocal8Bit(to_string(value.get<int>(L"Main.SmtpSleep", 0)).c_str());
 		QString temp_oneQQDayMax = QString::fromLocal8Bit(to_string(value.get<int>(L"Main.OneQQDayMax", 0)).c_str());
@@ -67,13 +73,16 @@ bool WSystem::readConf()
 
 		ui.edit_oneGroupEmail->setText(temp_oneGroupEmail);
 		ui.edit_oneGroupTime->setText(temp_oneGroupTime);
-		
+
 		ui.edit_verifyEmail->setText(temp_verifyEmail);
 		ui.edit_verifyPasswd->setText(temp_verifyPasswd);
 
 		ui.edit_smtpSleep->setText(temp_smtpSleep);
 		ui.edit_oneQQDayMax->setText(temp_oneQQDayMax);
 		ui.edit_oneQQSleep->setText(temp_oneQQSleep);
+
+		ui.edit_keyVerify->setText(temp_verifyKey);
+		ui.check_keyVerify->setChecked(temp_isVerifyKey);
 	}
 	catch (exception & e)
 	{
@@ -108,15 +117,19 @@ bool WSystem::writeConf()
 		child.value().put<int>(L"SmtpSleep", ui.edit_smtpSleep->text().toInt());
 		child.value().put<int>(L"OneQQDayMax", ui.edit_oneQQDayMax->text().toInt());
 		child.value().put<int>(L"OneQQSleep", ui.edit_oneQQSleep->text().toInt());
-		
-		
+
+
 		child.value().put<wstring>(L"VerifyEmail", ui.edit_verifyEmail->text().toStdWString());
 		child.value().put<wstring>(L"VerifyPasswd", ui.edit_verifyPasswd->text().toStdWString());
+
+		child.value().put<wstring>(L"VerifyKey", ui.edit_keyVerify->text().toStdWString());
 
 		child.value().put<int>(L"OneGroupTime", ui.edit_oneGroupTime->text().toInt());
 		child.value().put<int>(L"OneGroupEmail", ui.edit_oneGroupEmail->text().toInt());
 
 		child.value().put<int>(L"KeyWordMsgSize", ui.edit_keyWordMsgSize->text().toInt());
+
+		child.value().put<bool>(L"IsVerifyKey", ui.check_keyVerify->isChecked());
 
 		json::write_json(appFile + "conf.json", value);
 		Conf::makeUpdate();
@@ -159,4 +172,21 @@ void WSystem::onSave()
 	{
 		QMessageBox::warning(NULL, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("保存失败"), QMessageBox::Ok);
 	}
+}
+
+//获取秘钥
+void WSystem::onGetKey()
+{
+	ShellExecuteA(NULL, "open", "explorer.exe", "\"http://www.mail-verifier.com/home/api.php\"", NULL, SW_SHOW);
+}
+
+//获取剩余次数
+void WSystem::onGetCredits()
+{
+	if (ui.edit_keyVerify->text().isEmpty())
+	{
+		QMessageBox::warning(NULL, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("请先设置Key"), QMessageBox::Ok);
+	}
+
+	ShellExecuteA(NULL, "open", "explorer.exe", ("\"http://www.mail-verifier.com/do/api/?cmd=credits&key=" + ui.edit_keyVerify->text().toStdString() + "\"").c_str(), NULL, SW_SHOW);
 }

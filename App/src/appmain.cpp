@@ -1,4 +1,6 @@
-﻿#include <CQEVE.h>
+﻿#include "Fun.hpp"
+
+#include <CQEVE.h>
 #include <CQAPI.h>
 #include <CQAPI_EX.h>
 
@@ -8,7 +10,6 @@
 #include <thread>
 #include <string>
 
-#include "Fun.hpp"
 #include "FreeResFile.hpp"
 
 using namespace std;

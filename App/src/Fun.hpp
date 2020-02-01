@@ -1,4 +1,5 @@
 #pragma once
+#include <httplib/httplib.h>
 #include <string>
 #include <map>
 
@@ -6,6 +7,7 @@
 
 #include <sqlite3/sqlite3.h>
 #include <SQLiteCpp/SQLiteCpp.h>
+#include <email/phpSendEmail.hpp>
 #include <CQlogger.h>
 
 #include "json.hpp"
@@ -79,6 +81,8 @@ struct CONF_OTHER
 		, oneGroupTime(0)
 		, oneGroupEmail(0)
 		, keyWordMsgSize(0)
+		, isVerifyKey(false)
+		, verifyKey("")
 	{}
 
 	//设置类
@@ -112,6 +116,9 @@ struct CONF_OTHER
 	//验证邮箱可用性
 	string verifyEmail;
 	string verifyPasswd;
+
+	bool isVerifyKey;
+	string verifyKey;
 
 	//软件是否允许运行
 	bool appRun;
@@ -228,6 +235,14 @@ public:
 
 		string temp_word(word);
 		replace_all_distinct(temp_word, "'", "''");
+		replace_all_distinct(temp_word, "/", "//");
+		replace_all_distinct(temp_word, "[", "/[");
+		replace_all_distinct(temp_word, "]", "/]");
+		replace_all_distinct(temp_word, "%", "/%");
+		replace_all_distinct(temp_word, "&", "/&");
+		replace_all_distinct(temp_word, "_", "/_");
+		replace_all_distinct(temp_word, "(", "/(");
+		replace_all_distinct(temp_word, ")", "/)");
 
 
 		//构造sql语句
@@ -311,7 +326,7 @@ public:
 	void delDaySqlLog()
 	{
 		//sqlite3_exec(m_logdb, "DELETE FROM log WHERE time < datetime('now','start of day','0 day');", NULL, NULL, &m_error);
-		//m_db.exec("DELETE FROM log WHERE time < datetime('now','start of day','0 day');");
+		m_db.exec("DELETE FROM log WHERE time < datetime('now','start of day','0 day');");
 	}
 
 	string getError()
@@ -592,7 +607,7 @@ public:
 	bool isGroup();
 
 	//验证邮箱可用性
-	bool isVerify();
+	bool isVerify(phpSendEmail& email);
 
 	//修改统计数量   今发和累发
 	void countFinish(string& email, int num);
@@ -643,9 +658,9 @@ private:
 
 
 #include "FreeResFile.hpp"
+
 //#include "Email.h"
 //#include "SmtpEmail.h"
-#include <email/phpSendEmail.hpp>
 #include "mysql.hpp"
 
 #include <CQAPI.h>
@@ -685,7 +700,7 @@ string sendFile(".\\PHPRun\\Send.php");
 string verifyFile(".\\PHPRun\\Verify.php");
 
 //日志
-Mylogger logger("广传引流");
+Mylogger logger("懒人引流");
 
 int g_updataConf = 0;
 
@@ -1238,6 +1253,8 @@ bool Conf::read_Other()
 		g_otherSet.quitGroupSend = value.get<bool>(L"Main.QuitGroupSend", false);
 		g_otherSet.streng = value.get<bool>(L"Main.Streng", false);
 
+		g_otherSet.isVerifyKey = value.get<bool>(L"Main.IsVerifyKey", false);
+
 		g_otherSet.smtpSleep = value.get<int>(L"Main.SmtpSleep", 0);
 		g_otherSet.oneQQDayMax = value.get<int>(L"Main.OneQQDayMax", 0);
 		g_otherSet.oneQQSleep = value.get<int>(L"Main.OneQQSleep", 0);
@@ -1251,6 +1268,8 @@ bool Conf::read_Other()
 
 		g_otherSet.verifyEmail = OperateStr::wstring2string(value.get<wstring>(L"Main.VerifyEmail", L""));
 		g_otherSet.verifyPasswd = OperateStr::wstring2string(value.get<wstring>(L"Main.VerifyPasswd", L""));
+
+		g_otherSet.verifyKey = OperateStr::wstring2string(value.get<wstring>(L"Main.VerifyKey", L""));
 
 	}
 	catch (exception & e)
@@ -1577,24 +1596,8 @@ try
 	);
 
 	logger.testLog("开始验证");
-	if (email.verify() == false)
+	if (isVerify(email) == false)
 	{
-		string error = email.getInf();
-
-		//只取第一行
-		for (int i = 0; i < error.size(); i++)
-		{
-			if (error[i] == '\n')
-			{
-				error[i] = 0;
-				break;
-			}
-		}
-
-		//计数减一
-		countFinish(m_smtp.email, -1);
-		logger.sqlLog(m_GroupId, m_QQId, "发送失败", (string("未开通邮箱 ") + error).c_str());
-
 		return;
 	}
 
@@ -1892,11 +1895,6 @@ bool SendEmail::isOk()
 		return false;
 	}
 
-	if (isVerify() == false)
-	{
-		return false;
-	}
-
 	return true;
 }
 
@@ -1938,36 +1936,94 @@ bool SendEmail::isQQList()
 }
 
 //验证邮箱可用性
-bool SendEmail::isVerify()
+bool SendEmail::isVerify(phpSendEmail& email)
 {
-	if (g_otherSet.verifyEmail.empty() || g_otherSet.verifyPasswd.empty())
+	if (g_otherSet.isVerifyKey)
 	{
-		logger.sqlLog(m_GroupId, m_QQId, "发送失败", "验证邮箱未设置，请先到系统设置中设置验证邮箱");
-		return false;
-	}
+		if (g_otherSet.verifyKey.empty())
+		{
+			logger.sqlLog(m_GroupId, m_QQId, "发送失败", "开启了第三方验证邮箱，但未设置key");
+			return false;
+		}
 
-	/*Csmtp email(25, "smtp.qq.com", g_otherSet.verifyEmail, g_otherSet.verifyPasswd, "verify");
-	email.setTarget(to_string(m_QQId) + "@qq.com");
+		httplib::Client cli("www.mail-verifier.com", 80);
 
-	int ret = email.verify();
+		auto res = cli.Get(("/do/api/?key=" + g_otherSet.verifyKey + "&verify=" + to_string(m_QQId) + "@qq.com").c_str());
 
-	if (ret == 0)
-	{
-		return true;
-	}
-	else if (ret == 1)
-	{
-		logger.sqlLog(m_GroupId, m_QQId, "发送失败", ("邮箱未注册 " + email.getInf()).c_str());
-		return false;
+		if (!res || res->status != 200)
+		{
+			//出错
+			logger.sqlLog(m_GroupId, m_QQId, "发送失败", "第三方验证邮箱时 出现网络异常");
+		}
+		else
+		{
+
+			wstringstream html;
+			html << OperateStr::string2wstring(res->body);
+
+			//string json = substring(buf, "window.getTimelineService =", "}catch(e){}");
+			boost::property_tree::wptree root;
+			boost::property_tree::read_json(html, root);
+
+			int code = root.get<int>(L"code", -7);
+			if (code == 1)
+				return true;
+			else
+			{
+				if (code == 0)
+					logger.sqlLog(m_GroupId, m_QQId, "发送失败", "验证邮箱 此账号未开通邮箱");
+				else if (code == -1)
+					logger.sqlLog(m_GroupId, m_QQId, "发送失败", "验证邮箱 并非正确的邮箱格式");
+				else if (code == -2)
+					logger.sqlLog(m_GroupId, m_QQId, "发送失败", "验证邮箱 链接失败请重试");
+				else if (code == -3)
+					logger.sqlLog(m_GroupId, m_QQId, "发送失败", "验证邮箱 剩余次数用完了，请及时充值");
+				else if (code == -4)
+					logger.sqlLog(m_GroupId, m_QQId, "发送失败", "验证邮箱 请求KEY不存在");
+				else if (code == -5)
+					logger.sqlLog(m_GroupId, m_QQId, "发送失败", "验证邮箱 我们无法确定此电子邮件的状态");
+				else if (code == -6)
+					logger.sqlLog(m_GroupId, m_QQId, "发送失败", "验证邮箱 超出并发限制");
+				else if (code == -7)
+					logger.sqlLog(m_GroupId, m_QQId, "发送失败", "验证邮箱 解析json失败");
+
+				return false;
+			}
+
+		}
+
+
 	}
 	else
 	{
-		logger.sqlLog(m_GroupId, m_QQId, "发送失败", ("验证邮箱可用性时出现异常 " + email.getInf()).c_str());
-		return false;
-	}*/
+		if (g_otherSet.verifyEmail.empty() || g_otherSet.verifyPasswd.empty())
+		{
+			logger.sqlLog(m_GroupId, m_QQId, "发送失败", "验证邮箱未设置，请先到系统设置中设置验证邮箱");
+			return false;
+		}
 
+		if (email.verify() == false)
+		{
+			string error = email.getInf();
 
-	//return false;
+			//只取第一行
+			for (int i = 0; i < error.size(); i++)
+			{
+				if (error[i] == '\n')
+				{
+					error[i] = 0;
+					break;
+				}
+			}
+
+			//计数减一
+			countFinish(m_smtp.email, -1);
+			logger.sqlLog(m_GroupId, m_QQId, "发送失败", (string("未开通邮箱 ") + error).c_str());
+
+			return false;
+		}
+	}
+
 	return true;
 }
 

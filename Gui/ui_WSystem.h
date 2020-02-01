@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'WSystem.ui'
 **
-** Created by: Qt User Interface Compiler version 5.13.1
+** Created by: Qt User Interface Compiler version 5.14.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -11,6 +11,7 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
@@ -26,11 +27,10 @@ QT_BEGIN_NAMESPACE
 class Ui_WSystem
 {
 public:
-    QVBoxLayout *verticalLayout_11;
-    QVBoxLayout *verticalLayout_10;
-    QHBoxLayout *horizontalLayout_7;
-    QGroupBox *groupBox;
     QVBoxLayout *verticalLayout_12;
+    QHBoxLayout *horizontalLayout_14;
+    QGroupBox *groupBox;
+    QVBoxLayout *verticalLayout_11;
     QHBoxLayout *horizontalLayout_2;
     QVBoxLayout *verticalLayout_4;
     QLabel *label_5;
@@ -38,6 +38,16 @@ public:
     QVBoxLayout *verticalLayout_3;
     QLineEdit *edit_verifyEmail;
     QLineEdit *edit_verifyPasswd;
+    QGroupBox *groupBox_5;
+    QVBoxLayout *verticalLayout_8;
+    QCheckBox *check_keyVerify;
+    QHBoxLayout *horizontalLayout_11;
+    QLabel *label_13;
+    QLineEdit *edit_keyVerify;
+    QHBoxLayout *horizontalLayout_13;
+    QPushButton *button_getKey;
+    QPushButton *button_getCredits;
+    QHBoxLayout *horizontalLayout_7;
     QGroupBox *groupBox_2;
     QHBoxLayout *horizontalLayout_12;
     QVBoxLayout *verticalLayout_9;
@@ -86,23 +96,20 @@ public:
     {
         if (WSystem->objectName().isEmpty())
             WSystem->setObjectName(QString::fromUtf8("WSystem"));
-        WSystem->resize(549, 392);
-        verticalLayout_11 = new QVBoxLayout(WSystem);
-        verticalLayout_11->setSpacing(6);
-        verticalLayout_11->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_11->setObjectName(QString::fromUtf8("verticalLayout_11"));
-        verticalLayout_10 = new QVBoxLayout();
-        verticalLayout_10->setSpacing(6);
-        verticalLayout_10->setObjectName(QString::fromUtf8("verticalLayout_10"));
-        horizontalLayout_7 = new QHBoxLayout();
-        horizontalLayout_7->setSpacing(6);
-        horizontalLayout_7->setObjectName(QString::fromUtf8("horizontalLayout_7"));
-        groupBox = new QGroupBox(WSystem);
-        groupBox->setObjectName(QString::fromUtf8("groupBox"));
-        verticalLayout_12 = new QVBoxLayout(groupBox);
+        WSystem->resize(722, 384);
+        verticalLayout_12 = new QVBoxLayout(WSystem);
         verticalLayout_12->setSpacing(6);
         verticalLayout_12->setContentsMargins(11, 11, 11, 11);
         verticalLayout_12->setObjectName(QString::fromUtf8("verticalLayout_12"));
+        horizontalLayout_14 = new QHBoxLayout();
+        horizontalLayout_14->setSpacing(6);
+        horizontalLayout_14->setObjectName(QString::fromUtf8("horizontalLayout_14"));
+        groupBox = new QGroupBox(WSystem);
+        groupBox->setObjectName(QString::fromUtf8("groupBox"));
+        verticalLayout_11 = new QVBoxLayout(groupBox);
+        verticalLayout_11->setSpacing(6);
+        verticalLayout_11->setContentsMargins(11, 11, 11, 11);
+        verticalLayout_11->setObjectName(QString::fromUtf8("verticalLayout_11"));
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
@@ -142,11 +149,63 @@ public:
         horizontalLayout_2->addLayout(verticalLayout_3);
 
 
-        verticalLayout_12->addLayout(horizontalLayout_2);
+        verticalLayout_11->addLayout(horizontalLayout_2);
 
 
-        horizontalLayout_7->addWidget(groupBox);
+        horizontalLayout_14->addWidget(groupBox);
 
+        groupBox_5 = new QGroupBox(WSystem);
+        groupBox_5->setObjectName(QString::fromUtf8("groupBox_5"));
+        verticalLayout_8 = new QVBoxLayout(groupBox_5);
+        verticalLayout_8->setSpacing(6);
+        verticalLayout_8->setContentsMargins(11, 11, 11, 11);
+        verticalLayout_8->setObjectName(QString::fromUtf8("verticalLayout_8"));
+        check_keyVerify = new QCheckBox(groupBox_5);
+        check_keyVerify->setObjectName(QString::fromUtf8("check_keyVerify"));
+
+        verticalLayout_8->addWidget(check_keyVerify);
+
+        horizontalLayout_11 = new QHBoxLayout();
+        horizontalLayout_11->setSpacing(6);
+        horizontalLayout_11->setObjectName(QString::fromUtf8("horizontalLayout_11"));
+        label_13 = new QLabel(groupBox_5);
+        label_13->setObjectName(QString::fromUtf8("label_13"));
+
+        horizontalLayout_11->addWidget(label_13);
+
+        edit_keyVerify = new QLineEdit(groupBox_5);
+        edit_keyVerify->setObjectName(QString::fromUtf8("edit_keyVerify"));
+
+        horizontalLayout_11->addWidget(edit_keyVerify);
+
+
+        verticalLayout_8->addLayout(horizontalLayout_11);
+
+        horizontalLayout_13 = new QHBoxLayout();
+        horizontalLayout_13->setSpacing(6);
+        horizontalLayout_13->setObjectName(QString::fromUtf8("horizontalLayout_13"));
+        button_getKey = new QPushButton(groupBox_5);
+        button_getKey->setObjectName(QString::fromUtf8("button_getKey"));
+
+        horizontalLayout_13->addWidget(button_getKey);
+
+        button_getCredits = new QPushButton(groupBox_5);
+        button_getCredits->setObjectName(QString::fromUtf8("button_getCredits"));
+
+        horizontalLayout_13->addWidget(button_getCredits);
+
+
+        verticalLayout_8->addLayout(horizontalLayout_13);
+
+
+        horizontalLayout_14->addWidget(groupBox_5);
+
+
+        verticalLayout_12->addLayout(horizontalLayout_14);
+
+        horizontalLayout_7 = new QHBoxLayout();
+        horizontalLayout_7->setSpacing(6);
+        horizontalLayout_7->setObjectName(QString::fromUtf8("horizontalLayout_7"));
         groupBox_2 = new QGroupBox(WSystem);
         groupBox_2->setObjectName(QString::fromUtf8("groupBox_2"));
         horizontalLayout_12 = new QHBoxLayout(groupBox_2);
@@ -193,9 +252,6 @@ public:
 
 
         horizontalLayout_7->addWidget(groupBox_2);
-
-
-        verticalLayout_10->addLayout(horizontalLayout_7);
 
         groupBox_3 = new QGroupBox(WSystem);
         groupBox_3->setObjectName(QString::fromUtf8("groupBox_3"));
@@ -301,17 +357,17 @@ public:
         horizontalLayout_9->addWidget(label_10);
 
 
-        verticalLayout_10->addWidget(groupBox_3);
+        horizontalLayout_7->addWidget(groupBox_3);
 
 
-        verticalLayout_11->addLayout(verticalLayout_10);
+        verticalLayout_12->addLayout(horizontalLayout_7);
 
         horizontalLayout_8 = new QHBoxLayout();
         horizontalLayout_8->setSpacing(6);
         horizontalLayout_8->setObjectName(QString::fromUtf8("horizontalLayout_8"));
         groupBox_4 = new QGroupBox(WSystem);
         groupBox_4->setObjectName(QString::fromUtf8("groupBox_4"));
-        groupBox_4->setMinimumSize(QSize(300, 0));
+        groupBox_4->setMinimumSize(QSize(400, 0));
         horizontalLayout_10 = new QHBoxLayout(groupBox_4);
         horizontalLayout_10->setSpacing(6);
         horizontalLayout_10->setContentsMargins(11, 11, 11, 11);
@@ -392,7 +448,7 @@ public:
         horizontalLayout_8->addItem(horizontalSpacer_4);
 
 
-        verticalLayout_11->addLayout(horizontalLayout_8);
+        verticalLayout_12->addLayout(horizontalLayout_8);
 
 
         retranslateUi(WSystem);
@@ -403,9 +459,14 @@ public:
     void retranslateUi(QWidget *WSystem)
     {
         WSystem->setWindowTitle(QCoreApplication::translate("WSystem", "\347\263\273\347\273\237\350\256\276\347\275\256", nullptr));
-        groupBox->setTitle(QCoreApplication::translate("WSystem", "\351\252\214\350\257\201", nullptr));
+        groupBox->setTitle(QCoreApplication::translate("WSystem", "\346\231\256\351\200\232\351\252\214\350\257\201\351\202\256\347\256\261\345\217\257\347\224\250\346\200\247", nullptr));
         label_5->setText(QCoreApplication::translate("WSystem", "QQ\351\202\256\347\256\261\350\264\246\345\217\267:", nullptr));
         label_6->setText(QCoreApplication::translate("WSystem", "\351\202\256\347\256\261\346\216\210\346\235\203\347\240\201:", nullptr));
+        groupBox_5->setTitle(QCoreApplication::translate("WSystem", "\347\254\254\344\270\211\346\226\271\351\252\214\350\257\201\351\202\256\347\256\261\345\217\257\347\224\250\346\200\247", nullptr));
+        check_keyVerify->setText(QCoreApplication::translate("WSystem", "\344\275\277\347\224\250\347\254\254\344\270\211\346\226\271\351\252\214\350\257\201\346\226\271\345\274\217", nullptr));
+        label_13->setText(QCoreApplication::translate("WSystem", "key:", nullptr));
+        button_getKey->setText(QCoreApplication::translate("WSystem", "\350\216\267\345\217\226key", nullptr));
+        button_getCredits->setText(QCoreApplication::translate("WSystem", "\346\237\245\350\257\242\345\211\251\344\275\231", nullptr));
         groupBox_2->setTitle(QCoreApplication::translate("WSystem", "\351\243\216\346\216\247\350\256\276\347\275\256\344\270\200", nullptr));
         label_7->setText(QCoreApplication::translate("WSystem", "\346\257\217\351\202\256\347\256\261\345\217\221\351\200\201\351\232\224\351\227\264(\347\247\222):", nullptr));
         label_11->setText(QCoreApplication::translate("WSystem", "\347\276\244\346\266\210\346\201\257\345\255\227\346\225\260\351\231\220\345\210\266:", nullptr));

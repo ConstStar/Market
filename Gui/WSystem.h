@@ -20,4 +20,6 @@ private:
 
 public slots:
 	void onSave();
+	void onGetKey();
+	void onGetCredits();
 };
