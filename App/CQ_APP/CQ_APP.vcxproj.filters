@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="appmain.cpp" />
+    <ClCompile Include="Msg.cpp" />
+    <ClCompile Include="appinfo.h" />
+    <ClCompile Include="CQAPI.cpp" />
+    <ClCompile Include="MD5.cpp" />
+    <ClCompile Include="ComputerId.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="appVer.h" />
+    <ClInclude Include="Fun.hpp" />
+    <ClInclude Include="json.hpp" />
+    <ClInclude Include="MD5.h" />
+    <ClInclude Include="mysql.hpp" />
+    <ClInclude Include="FreeResFile.hpp" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Pipe.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="cn.xiaoxiaoge.Market.rc" />
+  </ItemGroup>
+</Project>

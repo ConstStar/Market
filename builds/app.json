@@ -1,0 +1,100 @@
+﻿{
+    "name": "懒人引流",
+    "version": "1.0.8 beta2",
+    "version_id": 1,
+    "author": "懒人引流",
+    "description": "懒人精准智能引流\\r\\n温馨提醒：用懒人引流，不会影响您开法拉利",
+    "event": [
+        {
+            "id": 1,
+            "type": 1001,
+            "name": "酷Q启动",
+            "function": "Startup",
+            "priority": 30000
+        },
+        {
+            "id": 2,
+            "type": 1003,
+            "name": "Enable",
+            "function": "Enable",
+            "priority": 30000
+        },
+        {
+            "id": 3,
+            "type": 1004,
+            "name": "Disable",
+            "function": "Disable",
+            "priority": 30000
+        },
+        {
+            "id": 4,
+            "type": 1002,
+            "name": "Exit",
+            "function": "Exit",
+            "priority": 30000
+        },
+        {
+            "id": 5,
+            "type": 103,
+            "name": "intoGroup",
+            "function": "intoGroup",
+            "priority": 30000
+        },
+        {
+            "id": 6,
+            "type": 102,
+            "name": "exitGroup",
+            "function": "exitGroup",
+            "priority": 30000
+        },
+        {
+            "id": 7,
+            "type": 301,
+            "name": "addFriend",
+            "function": "addFriend",
+            "priority": 30000
+        },
+        {
+            "id": 8,
+            "type": 302,
+            "name": "addGroup",
+            "function": "addGroup",
+            "priority": 30000
+        },
+        {
+            "id": 9,
+            "type": 21,
+            "name": "privateMsg",
+            "function": "privateMsg",
+            "priority": 30000
+        },
+        {
+            "id": 10,
+            "type": 2,
+            "name": "groupMsg",
+            "function": "groupMsg",
+            "priority": 30000
+        }
+    ],
+    "menu": [
+        {
+            "name": "设置",
+            "function": "menu"
+        }
+    ],
+    "status": [],
+    "auth": [
+        101,
+        106,
+        130,
+        132,
+        131,
+        150,
+        151,
+        160,
+        161,
+        162
+    ],
+    "ret": 1,
+    "apiver": 9
+}

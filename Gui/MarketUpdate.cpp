@@ -119,7 +119,7 @@ int MarketUpdate::check()
 		sql << "SELECT `Version` , `Must` , `Url` , `UpdateTime` , `UpdateLog`  FROM `app` ";
 		if (!version.empty())
 			sql << "WHERE `Version` > '" << version << "' ";
-		sql << "ORDER BY Version;";
+		sql << "ORDER BY Version DESC;";
 
 
 		res = stmt->executeQuery(sql.str().c_str()); // 标准sql语句
@@ -143,6 +143,11 @@ int MarketUpdate::check()
 			QString updataTime = QString::fromUtf8(res->getString("UpdateTime").c_str());
 			QString updataLog = QString::fromUtf8(res->getString("UpdateLog").c_str());
 
+			while(res->next())
+			{
+				if (!mustUpdate)
+					mustUpdate = res->getBoolean("Must");
+			}
 
 			//设置界面
 			ui.label_newVersion->setText(QString::fromLocal8Bit("最新版本\t") + version);

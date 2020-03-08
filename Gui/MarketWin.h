@@ -44,14 +44,15 @@ public:
 
 	~MarketWin();
 
-
+	void sqlExec(const char* sql);
 protected:
 	//这是一个虚函数，继承自QEvent.只要重写了这个虚函数，当你按下窗口右上角的"×"时，就会调用你所重写的此函数.
 	void closeEvent(QCloseEvent* event);
 
+
 private:
-	Ui::MarketWinClass ui;
 	mySqlQueryModel* model;
+	Ui::MarketWinClass ui;
 	QString sql;
 	QSqlDatabase db;
 	//QFuture <void> updateLog;

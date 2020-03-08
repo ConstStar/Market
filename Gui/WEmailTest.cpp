@@ -584,9 +584,20 @@ void WEmailTest::MsgValue(string& str)
 	char Week[20];
 
 	sprintf(date, "%4d年%02d月%02d日", sys.wYear, sys.wMonth, sys.wDay);
-	sprintf(time, "%02d:%02d:%02d.%03d", sys.wHour, sys.wMinute, sys.wSecond, sys.wMilliseconds);
-	sprintf(Week, "星期%d", sys.wDayOfWeek);
+	sprintf(time, "%02d时%02d分%02d秒", sys.wHour, sys.wMinute, sys.wSecond/*sys.wMilliseconds*/);
 
+	switch (sys.wDayOfWeek)
+	{
+	case 0:sprintf(Week, "星期天"); break;
+	case 1:sprintf(Week, "星期一"); break;
+	case 2:sprintf(Week, "星期二"); break;
+	case 3:sprintf(Week, "星期三"); break;
+	case 4:sprintf(Week, "星期四"); break;
+	case 5:sprintf(Week, "星期五"); break;
+	case 6:sprintf(Week, "星期六"); break;
+	default:
+		break;
+	}
 	//日期
 	replace_all_distinct(str, "{日期}", date);
 

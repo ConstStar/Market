@@ -31,6 +31,7 @@ extern map<long long, wstring> WinGroupList;
 MarketWin::MarketWin(QWidget* parent)
 	: QMainWindow(parent)
 	, sql("SELECT Time,QQId,GroupId,Type,Word FROM log ORDER BY Time;")
+	, model(NULL)
 {
 	ui.setupUi(this);
 
@@ -40,7 +41,8 @@ MarketWin::MarketWin(QWidget* parent)
 	ui.check_updata->setChecked(true);
 
 	db = QSqlDatabase::addDatabase("QSQLITE");
-	db.setDatabaseName("./log.db");
+	//db.setDatabaseName("./log.db");
+	db.setDatabaseName(":memory:");
 
 	if (!db.open())
 	{
@@ -204,8 +206,13 @@ void MarketWin::readLog()
 			throw exception("读取日志失败 无法打开数据库");
 		}
 
+		QSqlQuery query(db);
+		query.exec("CREATE TABLE IF NOT EXISTS log (Time DATETIME,QQId INT (15),GroupId INT (15),Type CHAR (20),Word TEXT);");
+
 		model = new mySqlQueryModel(this);
+
 		model->setQuery(sql, db);// "SELECT Time,QQId,GroupId,Type,Word FROM log ORDER BY Time;");
+
 		model->setHeaderData(0, Qt::Horizontal, QString::fromLocal8Bit("日期时间"));
 		model->setHeaderData(1, Qt::Horizontal, QString::fromLocal8Bit("QQ"));
 		model->setHeaderData(2, Qt::Horizontal, QString::fromLocal8Bit("群号"));
@@ -232,43 +239,22 @@ void MarketWin::readLog()
 		ui.tableView->scrollToBottom();//滚动条置底
 
 
-		//实时更新
-		QFuture <void> future = QtConcurrent::run([&]()
-			{
-				//定时更新
-				//int rowCount = model->rowCount();
-				while (true)
-				{
-					Sleep(3000);
-					////读取统计次数
+		////实时更新
+		//QFuture <void> future = QtConcurrent::run([&]()
+		//	{
+		//		//定时更新
+		//		//int rowCount = model->rowCount();
+		//		while (true)
+		//		{
+		//			Sleep(3000);
+		//			////读取统计次数
 
 
-					if (ui.check_updata->isChecked())
-					{
-						readCount();
+		//			
+		//		}
 
-						if (db.open())
-						{
-							/*QSqlQuery query(db);
-							query.exec("DELETE FROM log WHERE time < datetime('now','start of day','0 day');");*/
-
-							model->setQuery(sql, db);
-							//logColor();//设置颜色
-
-							//列表变化时
-							//if (rowCount != model->rowCount())
-							//{
-							ui.tableView->update();
-							ui.tableView->resizeRowsToContents();//自适应多行文本
-							ui.tableView->scrollToBottom();//滚动条置底
-							//rowCount = model->rowCount();
-						//}
-						}
-					}
-				}
-
-			}
-		);
+		//	}
+		//);
 
 		ui.tableView->resizeRowsToContents();//自适应多行文本
 	}
@@ -299,10 +285,10 @@ void MarketWin::slotRowDoubleClicked(const QModelIndex& w)
 
 	//定时清除提示内容
 	QFuture < void > future = QtConcurrent::run([&]()
-		{
-			Sleep(5000);
-			ui.label_state->clear();
-		}
+	{
+		Sleep(5000);
+		ui.label_state->clear();
+	}
 	);
 
 }
@@ -319,6 +305,42 @@ void MarketWin::onClearLog()
 	}
 }
 
+
+void MarketWin::sqlExec(const char* sql)
+{
+	if (db.isOpen() && model != NULL)
+	{
+		static int count = 0;
+
+		QSqlQuery query(db);
+		query.exec(sql);
+		count++;
+
+		if (count > 300)
+		{
+			count = 0;
+			query.exec("DELETE FROM log WHERE time < datetime('now','localtime','-10 minute');");
+		}
+
+		//主动更新
+		if (ui.check_updata->isChecked())
+		{
+			readCount();
+
+			model->setQuery(this->sql, db);
+			//logColor();//设置颜色
+
+			//列表变化时
+			//if (rowCount != model->rowCount())
+			//{
+			//ui.tableView->update();
+			ui.tableView->resizeRowsToContents();//自适应多行文本
+			ui.tableView->scrollToBottom();//滚动条置底
+			//rowCount = model->rowCount();
+			//}
+		}
+	}
+}
 
 //刷新列表
 void MarketWin::onUpdataList()

@@ -8,6 +8,7 @@
 #include <qfile.h>
 
 #include "json.hpp"
+#include "Pipe.hpp"
 
 #include <thread>
 #include <sstream>
@@ -29,25 +30,57 @@ string version;
 string key;
 string exceedDateTime;
 
+Pipe WinPipe;
 
-void closeWin(QApplication& a)
+std::function<void(const char*)> sqlExec = NULL;
+
+//#define _DEBUG
+
+void LogSql(string sql)
 {
+	if (sqlExec != NULL)
+		sqlExec(sql.c_str());
+	//wMain.sqlExec(sql.c_str());
+}
+
+
+void PipeCommand(string sql, QApplication& a)
+{
+	if (sql == "close")
+	{
+		a.quit();
+	}
+
+
+
+
+}
+
+
+void ReadPipe(QApplication& a)
+{
+	WinPipe.initClient();
+
 	auto ph = new std::thread([&]
 		{
 			while (true)
 			{
+				string buf;
+				WinPipe.ReadData(buf);
 
-				fstream file("closeWin.tmp");
-				if (file.is_open())
+				//MessageBoxA(NULL, buf.c_str(), "test", NULL);
+
+				if (!buf.empty())
 				{
-					file.close();
-
-					//remove("closeWin.tmp");
-					//MessageBoxA(NULL, "test", "test", MB_OK);
-					a.quit();
+					if (buf[0] - '0' == PIPEMSGTYPE::SQL)
+					{
+						LogSql(buf.c_str() + 1);
+					}
+					else if (buf[0] - '0' == PIPEMSGTYPE::COMMAND)
+					{
+						PipeCommand(buf.c_str() + 1, a);
+					}
 				}
-
-				Sleep(20);
 			}
 		});
 }
@@ -61,7 +94,7 @@ int main(int argc, char* argv[])
 
 
 	QApplication a(argc, argv);
-	closeWin(a);
+	ReadPipe(a);
 
 	QFile qss(":/moren.qss");
 	qss.open(QFile::ReadOnly);
@@ -83,9 +116,13 @@ int main(int argc, char* argv[])
 			return 0;
 #endif // 0
 
-		MarketWin w;
+		MarketWin wMain;
 
-		w.show();
+		sqlExec = [&](const char* sql) {
+			wMain.sqlExec(sql);
+		};
+
+		wMain.show();
 
 		return a.exec();
 #ifndef _DEBUG
@@ -95,9 +132,9 @@ int main(int argc, char* argv[])
 	{
 		if (get_keyData(a) == false)
 			return 0;
-		
-		MarketKey w;
-		w.show();
+
+		MarketKey wKey;
+		wKey.show();
 
 		return a.exec();
 
@@ -108,8 +145,8 @@ int main(int argc, char* argv[])
 		if (get_Update(a) == false)
 			return 0;
 
-		MarketUpdate w;
-		w.runApp();
+		MarketUpdate wUpdata;
+		wUpdata.runApp();
 
 		return a.exec();
 
@@ -133,8 +170,6 @@ bool get_mainData(QApplication& a)
 	try
 	{
 		string temp_buf = readFileAll("win.tmp");
-
-		remove("./win.tmp");
 
 		boost::property_tree::wptree temp_json;
 
@@ -182,17 +217,19 @@ bool get_mainData(QApplication& a)
 			throw exception("数据路径为空");
 		}
 
+		remove("./win.tmp");
+
 	}
 	catch (exception & e)
 	{
 		MessageBoxA(NULL, e.what(), "主界面 互通错误", MB_OK);
-		
+
 		return false;
 	}
 	catch (...)
 	{
 		MessageBoxA(NULL, "读取数据异常", "主界面 互通错误", MB_OK);
-		
+
 		return false;
 	}
 
@@ -240,14 +277,14 @@ bool get_keyData(QApplication& a)
 	catch (exception & e)
 	{
 		MessageBoxA(NULL, e.what(), "秘钥 互通错误，请尝试重启酷Q", MB_OK);
-		
+
 		//a.closeAllWindows();
 		return false;
 	}
 	catch (...)
 	{
 		MessageBoxA(NULL, "读取数据异常，请尝试重启酷", "秘钥 互通错误", MB_OK);
-		
+
 		//a.closeAllWindows();
 		return false;
 	}
@@ -287,7 +324,7 @@ bool get_Update(QApplication& a)
 	catch (exception & e)
 	{
 		MessageBoxA(NULL, e.what(), "检查更新 互通错误", MB_OK);
-		
+
 		//a.closeAllWindows();
 		return false;
 	}
@@ -295,7 +332,7 @@ bool get_Update(QApplication& a)
 	{
 		MessageBoxA(NULL, "读取数据异常", "检查更新 互通错误", MB_OK);
 
-	//	a.closeAllWindows();
+		//	a.closeAllWindows();
 		return false;
 	}
 

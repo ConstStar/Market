@@ -220,7 +220,7 @@
     </QtUic>
     <PostBuildEvent>
       <Command>
-copy /Y "$(TargetPath)" "$(SolutionDir)File\$(TargetFileName)"</Command>
+copy /Y "$(TargetPath)" "$(SolutionDir)Res\$(TargetFileName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -242,6 +242,7 @@ copy /Y "$(TargetPath)" "$(SolutionDir)File\$(TargetFileName)"</Command>
   <ItemGroup>
     <ClInclude Include="Download.hpp" />
     <ClInclude Include="Edition.h" />
+    <ClInclude Include="Pipe.hpp" />
     <QtMoc Include="WUserAgree.h" />
     <QtMoc Include="WWordLook.h" />
     <QtMoc Include="WKeyWordGroup.h" />
