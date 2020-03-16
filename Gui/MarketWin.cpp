@@ -34,6 +34,7 @@ MarketWin::MarketWin(QWidget* parent)
 	, model(NULL)
 {
 	ui.setupUi(this);
+	//setWindowIcon(QIcon(":/logo.ico"));
 
 	//ÉèÖÃÄ¬ÈÏÖµ
 	//QssStyle::setStyle(":/moren.qss");
@@ -312,8 +313,20 @@ void MarketWin::sqlExec(const char* sql)
 	{
 		static int count = 0;
 
+		QString sqlStr = sql;
+		QStringList sqlList = sqlStr.split("\n");
+
 		QSqlQuery query(db);
-		query.exec(sql);
+
+		for (auto oneSql : sqlList)
+		{
+			if (!oneSql.isEmpty())
+			{
+				query.exec(oneSql);
+			}
+		}
+
+
 		count++;
 
 		if (count > 300)

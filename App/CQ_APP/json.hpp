@@ -132,14 +132,14 @@ public:
 			wstringstream buf;
 			boost::property_tree::write_json(buf, value);
 			
-			wofstream file(file_path, ios::out);
+			ofstream file(file_path, ios::out);
 			if (!file.good())
 			{
 				file.close();
 				return false;
 			}
 
-			file << buf.str();
+			file << OperateStr::wstring2string(buf.str());
 			file.close();
 		}
 		catch (...)

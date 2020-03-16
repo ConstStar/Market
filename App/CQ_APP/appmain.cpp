@@ -117,7 +117,7 @@ EVE_Disable_EX(Disable)
 try
 {
 	//关闭界面
-	string closeWin = to_string(PIPEMSGTYPE::COMMAND) + "close";
+	string closeWin = "/*close*/";
 	WinPipe.WriteData(closeWin);
 
 
@@ -136,7 +136,7 @@ catch (...)
 EVE_Exit_EX(Exit)
 {
 	//关闭界面
-	string closeWin = to_string(PIPEMSGTYPE::COMMAND) + "close";
+	string closeWin = "/*close*/";
 	WinPipe.WriteData(closeWin);
 
 

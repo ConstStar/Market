@@ -212,7 +212,7 @@ class Mylogger : public CQ::Logger
 {
 public:
 
-	Mylogger(const char* name) : m_name(name) ,Logger(name)//, m_db(SQLITE_PATHNAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE)
+	Mylogger(const char* name) : m_name(name), Logger(name)//, m_db(SQLITE_PATHNAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE)
 	{
 
 		//sqlite3* logdb;
@@ -243,7 +243,6 @@ public:
 
 		//删除无用的日志
 		delDaySqlLog();
-
 
 		string temp_word(word);
 		replace_all_distinct(temp_word, "'", "''");
@@ -293,6 +292,7 @@ public:
 	//测试
 	void testLog(string str)
 	{
+
 		// 基于当前系统的当前日期/时间
 		time_t now = time(0);
 
@@ -368,9 +368,11 @@ private:
 
 		bool flag = false;*/
 
-
+		Logger::Info(sql);
 		string buf;
-		buf += to_string(PIPEMSGTYPE::SQL) + StrChange::ConvertAnsiToUtf8(sql);
+		buf += "\n";
+		buf += StrChange::ConvertAnsiToUtf8(sql);
+		buf += "\n";
 
 		WinPipe.WriteData(buf);
 
@@ -1025,21 +1027,21 @@ bool Conf::read_count()
 void Conf::initConfTime()
 {
 	thread* pKeyWord = new thread([]
+	{
+		while (true)
 		{
-			while (true)
-			{
-				waitUpdate();
-				wait();
+			waitUpdate();
+			wait();
 
-				read_keyWord();
-				read_emailList();
-				read_wordList();
-				read_groupList();
-				read_Other();
+			read_keyWord();
+			read_emailList();
+			read_wordList();
+			read_groupList();
+			read_Other();
 
-				signal();
-			}
+			signal();
 		}
+	}
 	);
 
 	pKeyWord->detach();
@@ -1048,18 +1050,18 @@ void Conf::initConfTime()
 void Conf::initGroup()
 {
 	auto ph = new std::thread([]
+	{
+		while (true)
 		{
-			while (true)
+			if (g_otherSet.oneGroupTime)
 			{
-				if (g_otherSet.oneGroupTime)
-				{
-					g_oneGroup.clear();
-				}
-
-				Sleep(g_otherSet.oneGroupTime * 1000);
+				g_oneGroup.clear();
 			}
 
-		});
+			Sleep(g_otherSet.oneGroupTime * 1000);
+		}
+
+	});
 
 }
 
@@ -1450,7 +1452,7 @@ bool OpenWin::openWin()
 		//WinExec("MarketWin.exe MarketWin", SW_SHOW);
 
 		//关闭原来的界面
-		string closeWin = to_string(PIPEMSGTYPE::COMMAND) + "close";
+		string closeWin = "/*close*/";
 		WinPipe.WriteData(closeWin);
 
 

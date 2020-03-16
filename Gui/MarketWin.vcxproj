@@ -243,6 +243,7 @@ copy /Y "$(TargetPath)" "$(SolutionDir)Res\$(TargetFileName)"</Command>
     <ClInclude Include="Download.hpp" />
     <ClInclude Include="Edition.h" />
     <ClInclude Include="Pipe.hpp" />
+    <ClInclude Include="resource.h" />
     <QtMoc Include="WUserAgree.h" />
     <QtMoc Include="WWordLook.h" />
     <QtMoc Include="WKeyWordGroup.h" />
@@ -337,6 +338,14 @@ copy /Y "$(TargetPath)" "$(SolutionDir)Res\$(TargetFileName)"</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="moren.qss" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="logo.ico">
+      <DeploymentContent>true</DeploymentContent>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

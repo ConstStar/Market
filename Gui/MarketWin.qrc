@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>moren.qss</file>
+        <file>logo.png</file>
     </qresource>
 </RCC>

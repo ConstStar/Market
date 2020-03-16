@@ -197,13 +197,20 @@
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <None Include="moren.qss">
-      <Filter>Source Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Pipe.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="logo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="moren.qss" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
 </Project>

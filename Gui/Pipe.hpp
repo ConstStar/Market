@@ -123,7 +123,15 @@ public:
 		{
 			DWORD nLEn = 0;
 			CHAR szBuffer[DATA_MAX]{ 0 };
-			ReadFile(GetStdHandle(STD_INPUT_HANDLE), szBuffer, sizeof(szBuffer), &nLEn, nullptr);
+
+			OVERLAPPED ov;
+			ov.Offset = 0;
+			ov.OffsetHigh = 0;
+			ov.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+
+ 			ReadFile(GetStdHandle(STD_INPUT_HANDLE), szBuffer, sizeof(szBuffer), &nLEn, &ov);
+			//ReadFileEx(GetStdHandle(STD_INPUT_HANDLE), szBuffer, sizeof(szBuffer), nullptr, nullptr);
+			Sleep(100);
 
 			buf = szBuffer;
 		}

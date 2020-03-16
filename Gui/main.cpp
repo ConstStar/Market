@@ -6,14 +6,17 @@
 #include <qmessagebox.h>
 #include <qstylefactory.h>
 #include <qfile.h>
+#include <QtConcurrentRun>
 
 #include "json.hpp"
 #include "Pipe.hpp"
 
-#include <thread>
+#include "resource.h"
+
 #include <sstream>
 #include <string>
 #include <map>
+#include <thread>
 
 using namespace std;
 
@@ -39,14 +42,36 @@ std::function<void(const char*)> sqlExec = NULL;
 void LogSql(string sql)
 {
 	if (sqlExec != NULL)
+	{
 		sqlExec(sql.c_str());
+	}
 	//wMain.sqlExec(sql.c_str());
 }
+
+//void test()
+//{
+//
+//	QFuture <void> future = QtConcurrent::run([&]()
+//	{
+//
+//		char sql[] = "INSERT INTO log (Time, QQId, GroupId, Type, Word) VALUES (datetime(CURRENT_TIMESTAMP,'localtime'),'0','0','test','word');";
+//
+//
+//		while (true)
+//		{
+//			if (sqlExec != NULL)
+//				sqlExec(sql);
+//
+//			Sleep(80);
+//		}
+//	}
+//	);
+//}
 
 
 void PipeCommand(string sql, QApplication& a)
 {
-	if (sql == "close")
+	if (sql == "/*close*/")
 	{
 		a.quit();
 	}
@@ -61,42 +86,65 @@ void ReadPipe(QApplication& a)
 {
 	WinPipe.initClient();
 
-	auto ph = new std::thread([&]
+	//QFuture <void> future = QtConcurrent::run([&]()
+
+	auto ph = new std::thread([&]()
+	{
+		while (true)
 		{
-			while (true)
+			//static int countEmpty = 0;
+			//int countEmpty = 0;
+
+			string buf;
+			WinPipe.ReadData(buf);
+
+			//MessageBoxA(NULL, buf.c_str(), "test", NULL);
+			if (!buf.empty())
 			{
-				string buf;
-				WinPipe.ReadData(buf);
+				//countEmpty = 0;
 
-				//MessageBoxA(NULL, buf.c_str(), "test", NULL);
+				//if (buf[0] - '0' == PIPEMSGTYPE::SQL)
+				//{
+				LogSql(buf.c_str());
+				//}
+				//else if (buf[0] - '0' == PIPEMSGTYPE::COMMAND)
 
-				if (!buf.empty())
+				if (buf.find("/*") != string::npos && buf.find("*/") != string::npos)
 				{
-					if (buf[0] - '0' == PIPEMSGTYPE::SQL)
-					{
-						LogSql(buf.c_str() + 1);
-					}
-					else if (buf[0] - '0' == PIPEMSGTYPE::COMMAND)
-					{
-						PipeCommand(buf.c_str() + 1, a);
-					}
+					PipeCommand(buf.c_str(), a);
 				}
 			}
-		});
+			/*else
+			{
+				countEmpty++;
+			}
+
+
+			if (countEmpty > 20)
+			{
+				MessageBoxA(NULL, "由于连续多次接收到空消息,界面将自动关闭", "错误", MB_OK);
+				a.quit();
+				break;
+			}*/
+
+
+		}
+	});
 }
 
 
 
 int main(int argc, char* argv[])
 {
-
-	QApplication::setStyle(QStyleFactory::create("Fusion"));
-
+	//QApplication::setStyle(QStyleFactory::create("Fusion"));
 
 	QApplication a(argc, argv);
+	a.setWindowIcon(QIcon(":/logo.png"));
+
 	ReadPipe(a);
 
 	QFile qss(":/moren.qss");
+
 	qss.open(QFile::ReadOnly);
 	a.setStyleSheet(qss.readAll());
 	qss.close();
@@ -122,6 +170,7 @@ int main(int argc, char* argv[])
 			wMain.sqlExec(sql);
 		};
 
+		//test();
 		wMain.show();
 
 		return a.exec();

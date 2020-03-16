@@ -344,7 +344,7 @@ public:
 
     void retranslateUi(QMainWindow *MarketWinClass)
     {
-        MarketWinClass->setWindowTitle(QCoreApplication::translate("MarketWinClass", "\344\270\273\347\225\214\351\235\242", nullptr));
+        MarketWinClass->setWindowTitle(QCoreApplication::translate("MarketWinClass", "\346\207\222\344\272\272\345\274\225\346\265\201", nullptr));
         label->setText(QCoreApplication::translate("MarketWinClass", "\346\227\245\345\277\227(\345\217\214\345\207\273\345\244\215\345\210\266)", nullptr));
         label_6->setText(QString());
         label_state->setText(QString());
