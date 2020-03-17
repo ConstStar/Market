@@ -1,7 +1,7 @@
 #pragma once
 
 // 应用版本
-#define APP_version "1.1.1 beta1"
+#define APP_version "1.1.1 beta2"
 
 
 // 应用顺序版本（每次发布时小工具自动将其+1）

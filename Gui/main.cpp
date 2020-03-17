@@ -86,9 +86,8 @@ void ReadPipe(QApplication& a)
 {
 	WinPipe.initClient();
 
-	//QFuture <void> future = QtConcurrent::run([&]()
-
-	auto ph = new std::thread([&]()
+	QFuture <void> future = QtConcurrent::run([&]()
+	//auto ph = new std::thread([&]()
 	{
 		while (true)
 		{

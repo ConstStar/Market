@@ -129,9 +129,9 @@ public:
 			ov.OffsetHigh = 0;
 			ov.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
+			Sleep(400);
  			ReadFile(GetStdHandle(STD_INPUT_HANDLE), szBuffer, sizeof(szBuffer), &nLEn, &ov);
 			//ReadFileEx(GetStdHandle(STD_INPUT_HANDLE), szBuffer, sizeof(szBuffer), nullptr, nullptr);
-			Sleep(100);
 
 			buf = szBuffer;
 		}
